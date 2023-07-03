@@ -42,11 +42,11 @@ def getSelectedSeasonMatchData(selected_season):
 
 season_dict = getSeasonDict()
 selected_season = st.selectbox("Select the season to analyze", list(season_dict.keys()))
-selected_season_match_data = getSelectedSeasonMatchData(selected_season)
+getSelectedSeasonMatchData(selected_season)
 
 
 if selected_season:
     st.write(f"Analyzing season: {selected_season}")
 
     st.write("Match Data:")
-    st.table(selected_season_match_data)
+    st.table(df_selected_season_matches)
