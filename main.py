@@ -11,6 +11,7 @@ parser = Sbopen()
 st.subheader("Here, we have La Liga data of all the Matches played by Barcelona in the Lionel Messi era")
 df_competition = parser.competition()
 df_selected_season_matches = pd.DataFrame()
+selectedMatches = pd.DataFrame()
 
 def getSeasonDict():    
     df_laliga_rows = df_competition[df_competition['competition_id'] == 11]
@@ -31,7 +32,6 @@ def fetch_matches(row):
 def getSelectedSeasonMatchData(selected_season):
     desired_season = season_dict[selected_season]
     df_laliga_rows = df_competition[(df_competition['competition_id'] == 11) & (df_competition['season_id'] == desired_season)]
-    selectedMatches = pd.DataFrame()
     
     # Iterate through the rows and fetch matches
     for index, row in df_laliga_rows.iterrows():
