@@ -21,7 +21,7 @@ def getSeasonDict():
     return season_dict
 
 def getSelectedSeasonMatchData(selected_season):
-    df_selected_season_rows = df_selected_season_rows[df_selected_season_rows['season_id'] == season_dict[selected_season]]
+    df_selected_season_rows = df_competition[(df_competition['competition_id'] == 11) & (df_competition['season_id'] == season_dict[selected_season])]
 
     # Iterate through the rows and fetch matches
     for index, row in df_selected_season_rows.iterrows():
