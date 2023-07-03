@@ -31,18 +31,19 @@ def fetch_matches(row):
 def getSelectedSeasonMatchData(selected_season):
     desired_season = season_dict[selected_season]
     df_laliga_rows = df_competition[(df_competition['competition_id'] == 11) & (df_competition['season_id'] == desired_season)]
+    selectedMatches = pd.DataFrame()
     
     # Iterate through the rows and fetch matches
     for index, row in df_laliga_rows.iterrows():
         matches = fetch_matches(row)
         # Append the matches to df_championsLeague_matches
-        df_selected_season_matches = df_selected_season_matches.append(matches, ignore_index=True)
+        selectedMatches = selectedMatches.append(matches, ignore_index=True)
 
 
 
 season_dict = getSeasonDict()
 selected_season = st.selectbox("Select the season to analyze", list(season_dict.keys()))
-getSelectedSeasonMatchData(selected_season)
+df_selected_season_matches =  getSelectedSeasonMatchData(selected_season)
 
 
 if selected_season:
