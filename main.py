@@ -63,7 +63,7 @@ selected_opponent_matches,selected_opponent_matchID = getSelectedOpponentMatches
 def fetch_events(row):
     # Your logic or function based on 'competition_id' and 'season_id' values
     df_event = parser.event(match_id=row)
-    return df_event
+    return df_event[0]
 
 
 def getSelectedOpponentMatchEvents(selected_opponent_matchID):
