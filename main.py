@@ -89,8 +89,8 @@ selected_analysis = st.selectbox("Select the technique to analyze", list(analysi
 
 ### 4. Creating plots for passes
 completed_normal_passes = selected_opponent_match_events.loc[selected_opponent_match_events['type_name'] == 'Pass'].loc[selected_opponent_match_events['sub_type_name'].isna()].set_index('id')
-completed_normal_passes_home = completed_normal_passes[completed_normal_passes['home_team_name'] == 'Barcelona']
-completed_normal_passes_away = completed_normal_passes[completed_normal_passes['away_team_name'] == 'Barcelona']
+#completed_normal_passes_home = completed_normal_passes[completed_normal_passes['home_team_name'] == 'Barcelona']
+#completed_normal_passes_away = completed_normal_passes[completed_normal_passes['away_team_name'] == 'Barcelona']
 
 def getPassesPerPlayerCount(df):
     player_passes = df.groupby('player_name').size().reset_index(name='total_passes')
