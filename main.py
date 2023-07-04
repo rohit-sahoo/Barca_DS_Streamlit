@@ -49,22 +49,37 @@ opponents_dict = getSelectedSeasonOpponents(selected_season)
 selected_opponent = st.selectbox("Select the opponent to analyze", opponents_dict)
 
 ## after selecting the opponent, we have to analyze Barcelona's performance against selected team in home and away games
+### 1. Filtering matches of selected opponents
 def getSelectedOpponentMatches(selected_opponent):
     selected_matches = df_selected_matches[(df_selected_matches['home_team_name'] == selected_opponent) | (df_selected_matches['away_team_name'] == selected_opponent)]
     match_ids = selected_matches['match_id'].tolist()
     df_opponent_matches = selected_matches
-    return df_opponent_matches
+    return df_opponent_matches,match_ids
 
-selected_opponent_matches = getSelectedOpponentMatches(selected_opponent)
+selected_opponent_matches,selected_opponent_matchID = getSelectedOpponentMatches(selected_opponent)
+
+### 2. Fetching match events with selected opponents
+def getSelectedOpponentMatchEvents(selected_opponent_matchID):
+    df_match_events = pd.DataFrame()
+
+    for match in selected_opponent_matchID:
+        current_matchID = match['match_id']
+        df_events = parser.event(current_matchID)
+        df_match_events = pd.concat([df_match_events, df_events], ignore_index=True)
+
+    return df_match_events
+
+selected_opponent_match_events = getSelectedOpponentMatchEvents(selected_opponent_matchID)
 
 
 if selected_season:
     st.write(f"Analyzing season: {selected_season}")
-    st.write("Match Data:")
-    st.table(df_selected_matches)
-
 
 if selected_opponent:
     st.write(f"Analyzing opponent: {selected_opponent}")
     st.write("Match Data:")
     st.table(selected_opponent_matches)
+
+    st.write("Match Events")
+    st.table(selected_opponent_match_events)
+
