@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
-from mplsoccer import SbOpen
+from mplsoccer import Sbopen
 
-parser = SbOpen()
+parser = Sbopen()
 
 st.subheader("Here, we have La Liga data of all the Matches played by Barcelona in the Lionel Messi era")
 df_competition = parser.competition()
