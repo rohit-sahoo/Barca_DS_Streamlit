@@ -33,7 +33,6 @@ selected_season = st.selectbox("Select the season to analyze", list(season_dict.
 df_selected_matches = getSelectedSeasonMatchData(selected_season)
 
 ## now that we have all the matches data, we have to filter out the opponents for the selected season
-
 def getSelectedSeasonOpponents(selected_season):
     opponents = []
     for index, row in df_selected_matches.iterrows():
@@ -49,6 +48,15 @@ def getSelectedSeasonOpponents(selected_season):
 opponents_dict = getSelectedSeasonOpponents(selected_season)
 selected_opponent = st.selectbox("Select the opponent to analyze", opponents_dict)
 
+## after selecting the opponent, we have to analyze Barcelona's performance against selected team in home and away games
+def getSelectedOpponentMatches(selected_opponent):
+    selected_matches = df_selected_matches[(df_selected_matches['home_team_name'] == selected_opponent) | (df_selected_matches['away_team_name'] == selected_opponent)]
+    match_ids = selected_matches['match_id'].tolist()
+    df_opponent_matches = selected_matches
+    return df_opponent_matches
+
+selected_opponent_matches = getSelectedOpponentMatches(selected_opponent)
+
 
 if selected_season:
     st.write(f"Analyzing season: {selected_season}")
@@ -59,3 +67,4 @@ if selected_season:
 if selected_opponent:
     st.write(f"Analyzing opponent: {selected_opponent}")
     st.write("Match Data:")
+    st.table(selected_opponent_matches)
