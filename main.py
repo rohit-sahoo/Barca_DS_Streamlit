@@ -97,7 +97,7 @@ def getPassesPerPlayerCount(df):
     top_players = player_passes.nlargest(15, 'total_passes')
     # Create a scatter plot
     fig, ax = plt.subplots()
-    ax.scatter(top_players['player_name'], top_players['passes'])
+    ax.scatter(top_players['player_name'], top_players['total_passes'])
 
     # Set the plot title and labels
     ax.set_title('Top 15 Players with Highest Passes')
