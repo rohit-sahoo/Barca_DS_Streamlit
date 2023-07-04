@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from mplsoccer import Sbopen
+import matplotlib.pyplot as plt
 
 parser = Sbopen()
 
@@ -65,7 +66,6 @@ def fetch_events(row):
     df_event = parser.event(match_id=row)
     return df_event[0]
 
-
 def getSelectedOpponentMatchEvents(selected_opponent_matchID):
     df_laliga_events = pd.DataFrame()
     # Iterate through the rows and fetch matches
@@ -77,15 +77,45 @@ def getSelectedOpponentMatchEvents(selected_opponent_matchID):
 
 
 selected_opponent_match_events = getSelectedOpponentMatchEvents(selected_opponent_matchID)
+home_events = selected_opponent_match_events[selected_opponent_match_events['home_team_name'] == 'Barcelona']
+away_events = selected_opponent_match_events[selected_opponent_match_events['away_team_name'] == 'Barcelona']
 
 
 ### 3. Ask user to select preferences like shot map, goal map etc.
-analysis_name = ['Shot HeatMap','Goal HeatMap','Passing Network']
+analysis_name = ['Shots','Goals','Passes']
 analysis_key = [1,2,3]
 analysis_dict = dict(zip(analysis_name, analysis_key))
 selected_analysis = st.selectbox("Select the technique to analyze", list(analysis_dict.keys()))
 
+### 4. Creating plots for passes
+completed_normal_passes = selected_opponent_match_events.loc[selected_opponent_match_events['type_name'] == 'Pass'].loc[selected_opponent_match_events['sub_type_name'].isna()].set_index('id')
+completed_normal_passes_home = completed_normal_passes[completed_normal_passes['home_team_name'] == 'Barcelona']
+completed_normal_passes_away = completed_normal_passes[completed_normal_passes['away_team_name'] == 'Barcelona']
 
+def getPassesPerPlayerCount(df):
+    player_passes = df.groupby('player_name').size().reset_index(name='total_passes')
+    top_players = player_passes.nlargest(15, 'total_passes')
+    # Create a scatter plot
+    fig, ax = plt.subplots()
+    ax.scatter(top_players['player_name'], top_players['passes'])
+
+    # Set the plot title and labels
+    ax.set_title('Top 15 Players with Highest Passes')
+    ax.set_xlabel('Player')
+    ax.set_ylabel('Number of Passes')
+
+    # Rotate the x-axis labels for better readability
+    plt.xticks(rotation=90)
+
+    # Show the plot in Streamlit app
+    st.pyplot(fig)
+
+
+
+### 5. Creating plots for Shots
+
+
+### 6. Creating plots for goals
 
 if selected_season:
     st.write(f"Analyzing season: {selected_season}")
@@ -97,4 +127,6 @@ if selected_opponent:
 
 if selected_analysis:
     st.write(f"Analyzing : {selected_analysis}")
+    if selected_analysis == "Passes":
+        getPassesPerPlayerCount(completed_normal_passes)
 
