@@ -77,8 +77,8 @@ def getSelectedOpponentMatchEvents(selected_opponent_matchID):
 
 
 selected_opponent_match_events = getSelectedOpponentMatchEvents(selected_opponent_matchID)
-home_events = selected_opponent_match_events[selected_opponent_match_events['home_team_name'] == 'Barcelona']
-away_events = selected_opponent_match_events[selected_opponent_match_events['away_team_name'] == 'Barcelona']
+#home_events = selected_opponent_match_events[selected_opponent_match_events['home_team_name'] == 'Barcelona']
+#away_events = selected_opponent_match_events[selected_opponent_match_events['away_team_name'] == 'Barcelona']
 
 
 ### 3. Ask user to select preferences like shot map, goal map etc.
