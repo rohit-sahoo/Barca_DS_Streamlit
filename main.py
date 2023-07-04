@@ -63,8 +63,7 @@ def getSelectedOpponentMatchEvents(selected_opponent_matchID):
     df_match_events = pd.DataFrame()
 
     for match in selected_opponent_matchID:
-        current_matchID = match['match_id']
-        df_events = parser.event(current_matchID)
+        df_events = parser.event(match)
         df_match_events = pd.concat([df_match_events, df_events], ignore_index=True)
 
     return df_match_events
