@@ -59,6 +59,12 @@ def getSelectedOpponentMatches(selected_opponent):
     return df_opponent_matches,match_ids
 
 selected_opponent_matches,selected_opponent_matchID = getSelectedOpponentMatches(selected_opponent)
+home_match = selected_opponent_matches[selected_opponent_matches['home_team_name'] == "Barcelona"]
+home_matchID = home_match['match_id']
+
+away_match = selected_opponent_matches[selected_opponent_matches['away_team_name'] == "Barcelona"]
+away_matchID = away_match['match_id']
+
 
 ### 2. Fetching match events with selected opponents
 # Function to fetch matches based on 'competition_id' and 'season_id' values
@@ -78,8 +84,8 @@ def getSelectedOpponentMatchEvents(selected_opponent_matchID):
 
 
 selected_opponent_match_events = getSelectedOpponentMatchEvents(selected_opponent_matchID)
-#home_events = selected_opponent_match_events[selected_opponent_match_events['home_team_name'] == 'Barcelona']
-#away_events = selected_opponent_match_events[selected_opponent_match_events['away_team_name'] == 'Barcelona']
+home_events = selected_opponent_match_events[selected_opponent_match_events['match_id'] == home_matchID]
+away_events = selected_opponent_match_events[selected_opponent_match_events['match_id'] == away_matchID]
 
 
 ### 3. Ask user to select preferences like shot map, goal map etc.
@@ -90,8 +96,8 @@ selected_analysis = st.selectbox("Select the technique to analyze", list(analysi
 
 ### 4. Creating plots for passes
 completed_normal_passes = selected_opponent_match_events.loc[selected_opponent_match_events['type_name'] == 'Pass'].loc[selected_opponent_match_events['sub_type_name'].isna()].set_index('id')
-#completed_normal_passes_home = completed_normal_passes[completed_normal_passes['home_team_name'] == 'Barcelona']
-#completed_normal_passes_away = completed_normal_passes[completed_normal_passes['away_team_name'] == 'Barcelona']
+completed_normal_passes_home = home_events.loc[home_events['type_name'] == 'Pass'].loc[home_events['sub_type_name'].isna()].set_index('id')
+completed_normal_passes_away = away_events.loc[away_events['type_name'] == 'Pass'].loc[away_events['sub_type_name'].isna()].set_index('id')
 
 def getPassesPerPlayerCount(df):
     player_passes = df.groupby('player_name').size().reset_index(name='total_passes')
@@ -106,7 +112,7 @@ def getPassesPerPlayerCount(df):
     ax.set_ylabel('Number of Passes')
 
     # Rotate the x-axis labels for better readability
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=90)
     # Show the plot in Streamlit app
     st.pyplot(fig)
 
@@ -161,7 +167,8 @@ def getTeamPassingNetwork(df):
                             alpha=1, lw=line_width, zorder=2, color="red", ax = ax["pitch"])
 
     fig.suptitle("Baracelona Passing Network against" + selected_opponent, fontsize = 30)
-    st.pyplot(fig)
+    #st.pyplot(fig)
+    plt.show()
 
 
 
@@ -192,6 +199,19 @@ if selected_opponent:
 if selected_analysis:
     st.write(f"Analyzing : {selected_analysis}")
     if selected_analysis == "Passes":
+        st.write(f"Analyzing total passes for both home and away games: {selected_analysis}")
         getPassesPerPlayerCount(completed_normal_passes)
-        getPassingNetwork(completed_normal_passes)
+
+        st.write(f"Analyzing total passes for home game: {selected_analysis}")
+        getPassesPerPlayerCount(home_events)
+        
+
+        st.write(f"Analyzing total passes for away game: {selected_analysis}")
+        getPassesPerPlayerCount(away_events)
+        
+
+
+
+
+        #getPassingNetwork(completed_normal_passes)
 
