@@ -59,20 +59,24 @@ def getSelectedOpponentMatches(selected_opponent):
 selected_opponent_matches,selected_opponent_matchID = getSelectedOpponentMatches(selected_opponent)
 
 ### 2. Fetching match events with selected opponents
+ # Function to fetch matches based on 'competition_id' and 'season_id' values
+def fetch_events(row):
+    # Your logic or function based on 'competition_id' and 'season_id' values
+    df_event = parser.event(match_id=row)
+    return df_event
+
+
 def getSelectedOpponentMatchEvents(selected_opponent_matchID):
-    df_match_events = pd.DataFrame()
-
-    for match in selected_opponent_matchID:
-        df_events = parser.event(match)
-        df_match_events = pd.concat([df_match_events, df_events], ignore_index=True)
-
-    return df_match_events
-
-selected_opponent_match_events = getSelectedOpponentMatchEvents(pd.Series(selected_opponent_matchID))
+    df_laliga_events = pd.DataFrame()
+    # Iterate through the rows and fetch matches
+    for row in selected_opponent_matchID:
+        events = fetch_events(row)
+        # Append the matches to df_championsLeague_matches
+        df_laliga_events = df_laliga_events.append(events, ignore_index=True)
+    return df_laliga_events
 
 
-
-
+selected_opponent_match_events = getSelectedOpponentMatchEvents(selected_opponent_matchID)
 
 
 if selected_season:
