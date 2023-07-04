@@ -20,10 +20,10 @@ def getSelectedSeasonMatchData(selected_season):
 
     # Iterate through the rows and fetch matches
     for index, row in df_selected_season_rows.iterrows():
-        competition_id = row['competition_id']
-        season_id = row['season_id']
+        current_competition_id = row['competition_id']
+        current_season_id = row['season_id']
         # Your logic or function based on 'competition_id' and 'season_id' values
-        df_match = parser.match(competition_id=competition_id, season_id=season_id)
+        df_match = parser.match(competition_id=current_competition_id, season_id=current_season_id)
         df_laliga_matches = pd.concat([df_laliga_matches, df_match], ignore_index=True)
     
     return df_laliga_matches
