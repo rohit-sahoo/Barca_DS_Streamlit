@@ -72,7 +72,7 @@ def getSelectedOpponentMatchEvents(selected_opponent_matchID):
     for row in selected_opponent_matchID:
         events = fetch_events(row)
         # Append the matches to df_championsLeague_matches
-        df_laliga_events = df_laliga_events.append(events, ignore_index=True)
+        df_laliga_events = pd.concat([df_laliga_events, events], ignore_index=True)
     return df_laliga_events
 
 
