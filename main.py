@@ -32,7 +32,30 @@ season_dict = getSeasonDict()
 selected_season = st.selectbox("Select the season to analyze", list(season_dict.keys()))
 df_selected_matches = getSelectedSeasonMatchData(selected_season)
 
+## now that we have all the matches data, we have to filter out the opponents for the selected season
+
+def getSelectedSeasonOpponents(selected_season):
+    opponents = []
+    for index, row in df_selected_matches.iterrows():
+        if row['home_team_name'] == 'Barcelona':
+            opponents.append(row['away_team_name'])
+        elif row['away_team_name'] == 'Barcelona':
+            opponents.append(row['home_team_name'])
+
+    unique_opponents = set(opponents)
+    unique_opponents_list = list(unique_opponents)
+    return unique_opponents_list
+
+opponents_dict = getSelectedSeasonOpponents(selected_season)
+selected_opponent = st.selectbox("Select the opponent to analyze", opponents_dict)
+
+
 if selected_season:
     st.write(f"Analyzing season: {selected_season}")
     st.write("Match Data:")
     st.table(df_selected_matches)
+
+
+if selected_opponent:
+    st.write(f"Analyzing opponent: {selected_opponent}")
+    st.write("Match Data:")
