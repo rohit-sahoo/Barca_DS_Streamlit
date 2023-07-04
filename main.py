@@ -24,7 +24,7 @@ def getSelectedSeasonMatchData(selected_season):
         season_id = row['season_id']
         # Your logic or function based on 'competition_id' and 'season_id' values
         df_match = parser.match(competition_id=competition_id, season_id=season_id)
-        df_laliga_matches = df_laliga_matches.append(df_match, ignore_index=True)
+        df_laliga_matches = pd.concat([df_laliga_matches, df_match], ignore_index=True)
     
     return df_laliga_matches
 
