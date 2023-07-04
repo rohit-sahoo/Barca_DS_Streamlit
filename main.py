@@ -31,7 +31,8 @@ def getSelectedSeasonMatchData(selected_season):
         df_match = parser.match(competition_id=competition_id, season_id=season_id)
         # Append the matches to df_championsLeague_matches
         df_laliga_matches = df_laliga_matches.append(df_match, ignore_index=True)
-        return df_laliga_matches
+    
+    return df_laliga_matches
 
 
 
