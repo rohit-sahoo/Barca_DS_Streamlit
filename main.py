@@ -59,7 +59,7 @@ def getSelectedOpponentMatches(selected_opponent):
 selected_opponent_matches,selected_opponent_matchID = getSelectedOpponentMatches(selected_opponent)
 
 ### 2. Fetching match events with selected opponents
- # Function to fetch matches based on 'competition_id' and 'season_id' values
+# Function to fetch matches based on 'competition_id' and 'season_id' values
 def fetch_events(row):
     # Your logic or function based on 'competition_id' and 'season_id' values
     df_event = parser.event(match_id=row)
@@ -79,6 +79,14 @@ def getSelectedOpponentMatchEvents(selected_opponent_matchID):
 selected_opponent_match_events = getSelectedOpponentMatchEvents(selected_opponent_matchID)
 
 
+### 3. Ask user to select preferences like shot map, goal map etc.
+analysis_name = ['Shot HeatMap','Goal HeatMap','Passing Network']
+analysis_key = [1,2,3]
+analysis_dict = dict(zip(analysis_name, analysis_key))
+selected_analysis = st.selectbox("Select the technique to analyze", list(analysis_dict.keys()))
+
+
+
 if selected_season:
     st.write(f"Analyzing season: {selected_season}")
 
@@ -87,6 +95,6 @@ if selected_opponent:
     st.write("Match Data:")
     st.table(selected_opponent_matches)
 
-    st.write("Match Events")
-    st.table(selected_opponent_match_events)
+if selected_analysis:
+    st.write(f"Analyzing : {selected_analysis}")
 
