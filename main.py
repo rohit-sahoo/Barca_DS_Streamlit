@@ -1,18 +1,13 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+from mplsoccer import SbOpen
 
-import matplotlib.pyplot as plt
-from mplsoccer import Pitch, Sbopen
-
-parser = Sbopen()
+parser = SbOpen()
 
 st.subheader("Here, we have La Liga data of all the Matches played by Barcelona in the Lionel Messi era")
 df_competition = parser.competition()
 
-
-def getSeasonDict():    
+def getSeasonDict():
     df_laliga_rows = df_competition[df_competition['competition_id'] == 11]
     season_name = df_laliga_rows['season_name']
     season_id = df_laliga_rows['season_id']
@@ -29,13 +24,9 @@ def getSelectedSeasonMatchData(selected_season):
         season_id = row['season_id']
         # Your logic or function based on 'competition_id' and 'season_id' values
         df_match = parser.match(competition_id=competition_id, season_id=season_id)
-        # Append the matches to df_championsLeague_matches
         df_laliga_matches = df_laliga_matches.append(df_match, ignore_index=True)
     
     return df_laliga_matches
-
-
-
 
 season_dict = getSeasonDict()
 selected_season = st.selectbox("Select the season to analyze", list(season_dict.keys()))
@@ -43,6 +34,5 @@ df_selected_matches = getSelectedSeasonMatchData(selected_season)
 
 if selected_season:
     st.write(f"Analyzing season: {selected_season}")
-
     st.write("Match Data:")
     st.table(df_selected_matches)
