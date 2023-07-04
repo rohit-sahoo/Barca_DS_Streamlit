@@ -68,7 +68,11 @@ def getSelectedOpponentMatchEvents(selected_opponent_matchID):
 
     return df_match_events
 
-selected_opponent_match_events = getSelectedOpponentMatchEvents(selected_opponent_matchID)
+selected_opponent_match_events = getSelectedOpponentMatchEvents(pd.Series(selected_opponent_matchID))
+
+
+
+
 
 
 if selected_season:
