@@ -204,12 +204,13 @@ def getPlayersForMatch(matchId_list):
         p_nickname = df_lineup[['player_nickname']]
         player_dict = dict(zip(p_nickname, p_name))
         df_barca_players.update(player_dict)
+        print(player_dict)
 
     return df_barca_players
 
 
 players_dict = getPlayersForMatch(selected_opponent_matchID)
-selected_player= st.selectbox("Select the player to analyze",list(players_dict.keys()))
+selected_player= st.selectbox("Select the player to analyze", list(players_dict.keys()))
 
 def getPlayersPassesPlot(df):
     #passes = df.loc[df['type_name'] == 'Pass'].loc[df['sub_type_name'] != 'Throw-in'].set_index('id')
