@@ -172,12 +172,21 @@ def getTeamPassingNetwork(df):
     plt.show()
 
 
-
+def getSubstitutionsEvent(df):
+    sub = df.loc[df["type_name"] == "Substitution"].loc[df["team_name"] == "Barcelona"].loc[df["match_id"] == df['match_id']].iloc[0]["index"]
+    #make df with successfull passes by England until the first substitution
+    mask_england = (df.type_name == 'Pass') & (df.team_name == "Barcelona") & (df.index < sub) & (df.outcome_name.isnull()) & (df.sub_type_name != "Throw-in")
+    #taking necessary columns
+    df_pass = df.loc[mask_england, ['x', 'y', 'end_x', 'end_y', "player_name", "pass_recipient_name"]]
+    #adjusting that only the surname of a player is presented.
+    df_pass["player_name"] = df_pass["player_name"].apply(lambda x: str(x).split()[-1])
+    df_pass["pass_recipient_name"] = df_pass["pass_recipient_name"].apply(lambda x: str(x).split()[-1])
+    return df_pass
 
 def getPassingNetwork(df):
-    ## for Barcelona
-    barca_passes = df[df['team_name'] == 'Barcelona']
-    getTeamPassingNetwork(barca_passes)
+
+    df_subs = getSubstitutionsEvent(df)
+    getTeamPassingNetwork(df_subs)
 
     ## for selected opponent
     #opponent_passes = df[df['team_name'] == selected_opponent]
@@ -200,20 +209,19 @@ if selected_opponent:
 if selected_analysis:
     st.write(f"Analyzing : {selected_analysis}")
     if selected_analysis == "Passes":
-        st.write(f"Analyzing total passes for both home and away games: {selected_analysis}")
+        st.write(f"Analyzing total passes for both home and away games:")
         getPassesPerPlayerCount(completed_normal_passes)
 
-
-        st.write(f"Analyzing total passes for home game: {selected_analysis}")
+        st.write(f"Analyzing total passes for home game:")
         getPassesPerPlayerCount(home_events)
         
-
-        st.write(f"Analyzing total passes for away game: {selected_analysis}")
+        st.write(f"Analyzing total passes for away game:")
         getPassesPerPlayerCount(away_events)
         
+        st.write("Passing network of Barcelona for home game")
+        getPassingNetwork(home_events)
 
+        st.write("Passing network of Barcelona for away game")
+        getPassingNetwork(away_events)
 
-
-
-        #getPassingNetwork(completed_normal_passes)
 
