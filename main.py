@@ -203,7 +203,7 @@ def getPlayersForMatch(matchId_list):
         p_name = df_lineup[['player_name']]
         p_nickname = df_lineup[['player_nickname']]
         player_dict = dict(zip(p_nickname, p_name))
-        df_barca_players = df_barca_players.update(player_dict)
+        df_barca_players.update(player_dict)
 
     return df_barca_players
 
