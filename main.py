@@ -167,7 +167,7 @@ def getTeamPassingNetwork(df):
             pitch.lines(player1_x, player1_y, player2_x, player2_y,
                             alpha=1, lw=line_width, zorder=2, color="red", ax = ax["pitch"])
 
-    fig.suptitle("Baracelona Passing Network against" , fontsize = 30)
+    fig.suptitle("Baracelona Passing Network against" + selected_opponent, fontsize = 30)
     st.pyplot(fig)
     #plt.show()
 
@@ -192,6 +192,37 @@ def getPassingNetwork(df):
     ## for selected opponent
     #opponent_passes = df[df['team_name'] == selected_opponent]
     #getTeamPassingNetwork(opponent_passes)
+
+def getPlayersForMatch(matchId_list):
+
+    df_barca_players = pd.DataFrame()
+
+    for matchId in matchId_list:
+        df_lineup = parser.lineup(matchId)
+        df_lineup = df_lineup[['player_nickname']]
+        df_barca_players = pd.concat([df_barca_players, df_lineup], ignore_index=True)
+        df_barca_players = df_barca_players.drop_duplicates()
+
+    return df_barca_players
+
+
+players_dict = getPlayersForMatch(selected_opponent_matchID)
+selected_player= st.selectbox("Select the player to analyze", players_dict)
+
+def getPlayersPassesPlot(df):
+    #passes = df.loc[df['type_name'] == 'Pass'].loc[df['sub_type_name'] != 'Throw-in'].set_index('id')
+    mask_bronze = (df.type_name == 'Pass') & (df.player_name == selected_player)
+    df_pass = df.loc[mask_bronze, ['x', 'y', 'end_x', 'end_y']]
+
+    pitch = Pitch(line_color='black')
+    fig, ax = pitch.grid(grid_height=0.9, title_height=0.06, axis=False,
+                        endnote_height=0.04, title_space=0, endnote_space=0)
+    pitch.arrows(df_pass.x, df_pass.y,
+                df_pass.end_x, df_pass.end_y, color = "blue", ax=ax['pitch'])
+    pitch.scatter(df_pass.x, df_pass.y, alpha = 0.2, s = 500, color = "blue", ax=ax['pitch'])
+    fig.suptitle(f"{selected_player} passes against {selected_opponent}", fontsize = 30)
+    st.pyplot(fig)
+
 
 
 
@@ -219,10 +250,17 @@ if selected_analysis:
         st.write(f"Analyzing total passes for away game:")
         getPassesPerPlayerCount(away_events)
         
-        st.write("Passing network of Barcelona for home game")
+        st.write(f"Passing network of Barcelona against: {selected_opponent}")
         getPassingNetwork(selected_opponent_match_events)
 
         st.write("Passing network of Barcelona for away game")
         #getPassingNetwork(away_events)
+
+        if selected_player:
+            st.write(f"Analyzing passes for {selected_player} against {selected_opponent}")
+            st.write("1. Home Game")
+            getPlayersPassesPlot(home_events)
+            st.write("2. Away Game")
+            getPlayersPassesPlot(away_events)
 
 
