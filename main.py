@@ -204,6 +204,7 @@ if selected_analysis:
         getPassesPerPlayerCount(completed_normal_passes)
 
         st.write("Home Match ID", home_matchID)
+        st.write("Match Id type", type(home_matchID))
         st.write("Away match ID", away_matchID)
 
         #st.write(f"Analyzing total passes for home game: {selected_analysis}")
