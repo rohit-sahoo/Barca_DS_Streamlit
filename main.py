@@ -60,10 +60,10 @@ def getSelectedOpponentMatches(selected_opponent):
 
 selected_opponent_matches,selected_opponent_matchID = getSelectedOpponentMatches(selected_opponent)
 home_match = selected_opponent_matches[selected_opponent_matches['home_team_name'] == "Barcelona"]
-home_matchID = home_match['match_id'].astype(int)
+home_matchID = int(home_match['match_id'].item())
 
 away_match = selected_opponent_matches[selected_opponent_matches['away_team_name'] == "Barcelona"]
-away_matchID = away_match['match_id'].astype(int)
+away_matchID = int(away_match['match_id'].item())
 
 
 
