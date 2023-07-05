@@ -195,7 +195,7 @@ def getPassingNetwork(df):
 
 def getPlayersForMatch(matchId_list):
 
-    df_barca_players = {}
+    df_barca_players = dict()
 
     for matchId in matchId_list:
         df_lineup = parser.lineup(matchId)
