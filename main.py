@@ -220,7 +220,7 @@ if selected_analysis:
         getPassesPerPlayerCount(away_events)
         
         st.write("Passing network of Barcelona for home game")
-        getPassingNetwork(home_events)
+        getPassingNetwork(selected_opponent_match_events)
 
         st.write("Passing network of Barcelona for away game")
         #getPassingNetwork(away_events)
