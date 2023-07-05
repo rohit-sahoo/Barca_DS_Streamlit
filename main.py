@@ -60,10 +60,10 @@ def getSelectedOpponentMatches(selected_opponent):
 
 selected_opponent_matches,selected_opponent_matchID = getSelectedOpponentMatches(selected_opponent)
 home_match = selected_opponent_matches[selected_opponent_matches['home_team_name'] == "Barcelona"]
-home_matchID = home_match['match_id']
+home_matchID = home_match['match_id'].astype(int)
 
 away_match = selected_opponent_matches[selected_opponent_matches['away_team_name'] == "Barcelona"]
-away_matchID = away_match['match_id']
+away_matchID = away_match['match_id'].astype(int)
 
 
 ### 2. Fetching match events with selected opponents
@@ -84,8 +84,8 @@ def getSelectedOpponentMatchEvents(selected_opponent_matchID):
 
 
 selected_opponent_match_events = getSelectedOpponentMatchEvents(selected_opponent_matchID)
-home_events = selected_opponent_match_events[selected_opponent_match_events['match_id'] == home_matchID]
-away_events = selected_opponent_match_events[selected_opponent_match_events['match_id'] == away_matchID]
+home_events = selected_opponent_match_events[selected_opponent_match_events['match_id'].astype(int) == home_matchID]
+away_events = selected_opponent_match_events[selected_opponent_match_events['match_id'].astype(int) == away_matchID]
 
 
 ### 3. Ask user to select preferences like shot map, goal map etc.
