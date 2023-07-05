@@ -199,6 +199,7 @@ def getPlayersForMatch(matchId_list):
 
     for matchId in matchId_list:
         df_lineup = parser.lineup(matchId)
+        df_lineup = df_lineup[df_lineup['team_name'] == "Barcelona"]
         df_lineup = df_lineup[['player_nickname']]
         df_barca_players = pd.concat([df_barca_players, df_lineup], ignore_index=True)
         df_barca_players = df_barca_players.drop_duplicates()
