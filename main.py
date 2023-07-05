@@ -59,11 +59,12 @@ def getSelectedOpponentMatches(selected_opponent):
     return df_opponent_matches,match_ids
 
 selected_opponent_matches,selected_opponent_matchID = getSelectedOpponentMatches(selected_opponent)
-#home_match = selected_opponent_matches[selected_opponent_matches['home_team_name'] == "Barcelona"]
-#home_matchID = home_match['match_id'].astype(int)
+home_match = selected_opponent_matches[selected_opponent_matches['home_team_name'] == "Barcelona"]
+home_matchID = home_match['match_id'].astype(int)
 
-#away_match = selected_opponent_matches[selected_opponent_matches['away_team_name'] == "Barcelona"]
-#away_matchID = away_match['match_id'].astype(int)
+away_match = selected_opponent_matches[selected_opponent_matches['away_team_name'] == "Barcelona"]
+away_matchID = away_match['match_id'].astype(int)
+
 
 
 ### 2. Fetching match events with selected opponents
@@ -201,6 +202,9 @@ if selected_analysis:
     if selected_analysis == "Passes":
         st.write(f"Analyzing total passes for both home and away games: {selected_analysis}")
         getPassesPerPlayerCount(completed_normal_passes)
+
+        st.write("Home Match ID", home_matchID)
+        st.write("Away match ID", away_matchID)
 
         #st.write(f"Analyzing total passes for home game: {selected_analysis}")
         #getPassesPerPlayerCount(home_events)
