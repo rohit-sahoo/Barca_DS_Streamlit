@@ -200,8 +200,8 @@ def getPlayersForMatch(matchId_list):
     for matchId in matchId_list:
         df_lineup = parser.lineup(matchId)
         df_lineup = df_lineup[df_lineup['team_name'] == "Barcelona"]
-        p_name = df_lineup[['player_name']]
-        p_nickname = df_lineup[['player_nickname']]
+        p_name = df_lineup['player_name']
+        p_nickname = df_lineup['player_nickname']
         player_dict = dict(zip(p_nickname, p_name))
         df_barca_players.update(player_dict)
         #print(df_barca_players)
@@ -210,7 +210,6 @@ def getPlayersForMatch(matchId_list):
 
 
 players_dict = getPlayersForMatch(selected_opponent_matchID)
-print(players_dict)
 selected_player= st.selectbox("Select the player to analyze", list(players_dict.keys()))
 
 def getPlayersPassesPlot(df):
