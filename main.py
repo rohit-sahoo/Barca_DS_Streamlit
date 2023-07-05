@@ -85,8 +85,8 @@ def getSelectedOpponentMatchEvents(selected_opponent_matchID):
 
 
 selected_opponent_match_events = getSelectedOpponentMatchEvents(selected_opponent_matchID)
-#home_events = selected_opponent_match_events[selected_opponent_match_events['match_id'].astype(int) == home_matchID]
-#away_events = selected_opponent_match_events[selected_opponent_match_events['match_id'].astype(int) == away_matchID]
+home_events = selected_opponent_match_events[int(selected_opponent_match_events['match_id'].item()) == home_matchID]
+away_events = selected_opponent_match_events[int(selected_opponent_match_events['match_id'].item()) == away_matchID]
 
 
 ### 3. Ask user to select preferences like shot map, goal map etc.
@@ -97,8 +97,8 @@ selected_analysis = st.selectbox("Select the technique to analyze", list(analysi
 
 ### 4. Creating plots for passes
 completed_normal_passes = selected_opponent_match_events.loc[selected_opponent_match_events['type_name'] == 'Pass'].loc[selected_opponent_match_events['sub_type_name'].isna()].set_index('id')
-#completed_normal_passes_home = home_events.loc[home_events['type_name'] == 'Pass'].loc[home_events['sub_type_name'].isna()].set_index('id')
-#completed_normal_passes_away = away_events.loc[away_events['type_name'] == 'Pass'].loc[away_events['sub_type_name'].isna()].set_index('id')
+completed_normal_passes_home = home_events.loc[home_events['type_name'] == 'Pass'].loc[home_events['sub_type_name'].isna()].set_index('id')
+completed_normal_passes_away = away_events.loc[away_events['type_name'] == 'Pass'].loc[away_events['sub_type_name'].isna()].set_index('id')
 
 def getPassesPerPlayerCount(df):
     player_passes = df.groupby('player_name').size().reset_index(name='total_passes')
@@ -203,16 +203,13 @@ if selected_analysis:
         st.write(f"Analyzing total passes for both home and away games: {selected_analysis}")
         getPassesPerPlayerCount(completed_normal_passes)
 
-        st.write("Home Match ID", home_matchID)
-        st.write("Match Id type", type(home_matchID))
-        st.write("Away match ID", away_matchID)
 
-        #st.write(f"Analyzing total passes for home game: {selected_analysis}")
-        #getPassesPerPlayerCount(home_events)
+        st.write(f"Analyzing total passes for home game: {selected_analysis}")
+        getPassesPerPlayerCount(home_events)
         
 
-        #st.write(f"Analyzing total passes for away game: {selected_analysis}")
-        #getPassesPerPlayerCount(away_events)
+        st.write(f"Analyzing total passes for away game: {selected_analysis}")
+        getPassesPerPlayerCount(away_events)
         
 
 
