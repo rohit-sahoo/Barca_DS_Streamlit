@@ -167,9 +167,10 @@ def getTeamPassingNetwork(df):
             pitch.lines(player1_x, player1_y, player2_x, player2_y,
                             alpha=1, lw=line_width, zorder=2, color="red", ax = ax["pitch"])
 
-    fig.suptitle("Baracelona Passing Network against" + selected_opponent, fontsize = 30)
+    fig.suptitle("Baracelona Passing Network against" , fontsize = 30)
     #st.pyplot(fig)
     plt.show()
+
 
 
 def getSubstitutionsEvent(df):
@@ -222,6 +223,6 @@ if selected_analysis:
         getPassingNetwork(home_events)
 
         st.write("Passing network of Barcelona for away game")
-        getPassingNetwork(away_events)
+        #getPassingNetwork(away_events)
 
 
