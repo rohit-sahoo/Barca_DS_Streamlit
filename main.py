@@ -195,24 +195,25 @@ def getPassingNetwork(df):
 
 def getPlayersForMatch(matchId_list):
 
-    df_barca_players = pd.DataFrame()
+    df_barca_players = {}
 
     for matchId in matchId_list:
         df_lineup = parser.lineup(matchId)
         df_lineup = df_lineup[df_lineup['team_name'] == "Barcelona"]
-        df_lineup = df_lineup[['player_nickname']]
-        df_barca_players = pd.concat([df_barca_players, df_lineup], ignore_index=True)
-        df_barca_players = df_barca_players.drop_duplicates()
+        p_name = df_lineup[['player_name']]
+        p_nickname = df_lineup[['player_nickname']]
+        player_dict = dict(zip(p_nickname, p_name))
+        df_barca_players = df_barca_players.update(player_dict)
 
     return df_barca_players
 
 
 players_dict = getPlayersForMatch(selected_opponent_matchID)
-selected_player= st.selectbox("Select the player to analyze", players_dict)
+selected_player= st.selectbox("Select the player to analyze",list(players_dict.keys()))
 
 def getPlayersPassesPlot(df):
     #passes = df.loc[df['type_name'] == 'Pass'].loc[df['sub_type_name'] != 'Throw-in'].set_index('id')
-    mask_bronze = (df.type_name == 'Pass') & (df.player_name == selected_player)
+    mask_bronze = (df.type_name == 'Pass') & (df.player_name == players_dict[selected_player])
     df_pass = df.loc[mask_bronze, ['x', 'y', 'end_x', 'end_y']]
 
     pitch = Pitch(line_color='black')
