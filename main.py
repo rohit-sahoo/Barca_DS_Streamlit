@@ -168,8 +168,8 @@ def getTeamPassingNetwork(df):
                             alpha=1, lw=line_width, zorder=2, color="red", ax = ax["pitch"])
 
     fig.suptitle("Baracelona Passing Network against" , fontsize = 30)
-    #st.pyplot(fig)
-    plt.show()
+    st.pyplot(fig)
+    #plt.show()
 
 
 
