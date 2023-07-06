@@ -194,6 +194,13 @@ def getPassingNetwork(df):
     #opponent_passes = df[df['team_name'] == selected_opponent]
     #getTeamPassingNetwork(opponent_passes)
 
+
+def get_key_from_value(dictionary, value):
+    for key, val in dictionary.items():
+        if val == value:
+            return key
+    return None
+
 def getPlayersForMatch(matchId_list):
 
     df_barca_players = dict()
@@ -284,14 +291,13 @@ def getPassingHeatMap(df):
 
 def plotDangerousPlayerPlots(df):
     # Keep only surnames
-    df["player_name"] = df["player_name"].apply(lambda x: str(x).split()[-1])
-
+    df["player_nickname"] = get_key_from_value(players_dict, df["player_name"])
     # Count passes by player and normalize them
-    pass_count = df.groupby("player_name").size().reset_index(name="pass_count")
+    pass_count = df.groupby("player_nickname").size().reset_index(name="pass_count")
 
     # Create a bar plot
     fig, ax = plt.subplots()
-    ax.bar(pass_count["player_name"], pass_count["pass_count"])
+    ax.bar(pass_count["player_nickname"], pass_count["pass_count"])
     
     # Set plot title and labels
     ax.set_title("Passes by Player")
