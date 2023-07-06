@@ -91,8 +91,8 @@ away_events = selected_opponent_match_events[selected_opponent_match_events['mat
 
 
 ### 3. Ask user to select preferences like shot map, goal map etc.
-analysis_name = ['Shots','Goals','Passes']
-analysis_key = [1,2,3]
+analysis_name = ['Shots','Passes']
+analysis_key = [1,2]
 analysis_dict = dict(zip(analysis_name, analysis_key))
 selected_analysis = st.selectbox("Select the technique to analyze", list(analysis_dict.keys()))
 
@@ -359,6 +359,25 @@ def plotShotsBarPlot(df):
     # Show the plot in Streamlit app
     st.pyplot(fig)
 
+def plotShotHeatMap(df):
+    df_shots = df[(df['type_name'] == 'Shot') & (df['player_name'] == selected_player)]
+    no_games = df_shots['match_id'].nunique()
+
+    #plot vertical pitch
+    pitch = Pitch(line_zorder=2, line_color='black')
+    fig, ax = pitch.grid(grid_height=0.9, title_height=0.06, axis=False,
+                        endnote_height=0.04, title_space=0, endnote_space=0)
+    #get the 2D histogram
+    bin_statistic = pitch.bin_statistic(df_shots.x, df_shots.y, statistic='count', bins=(6, 5), normalize=False)
+    #normalize by number of games
+    bin_statistic["statistic"] = bin_statistic["statistic"]/no_games
+    #make a heatmap
+    pcm  = pitch.heatmap(bin_statistic, cmap='Reds', edgecolor='grey', ax=ax['pitch'])
+    #legend to our plot
+    ax_cbar = fig.add_axes((1, 0.093, 0.03, 0.786))
+    cbar = plt.colorbar(pcm, cax=ax_cbar)
+    fig.suptitle(f'Shots heatmap of {selected_player} against {selected_opponent} at home and away', fontsize = 30)
+    st.pyplot(fig)
 
 ### 6. Creating plots for goals
 
@@ -407,6 +426,9 @@ if selected_analysis:
         #getPassingProbability()
 
     if selected_analysis == "Shots":
+
+        st.write("Shots heat map for home and away game")
+        plotShotHeatMap(selected_opponent_match_events)
         
         st.write("Plotting shots for the match at home")
         plotShots(home_events)
@@ -414,8 +436,12 @@ if selected_analysis:
         st.write("Plotting shots for the match at away")
         plotShots(away_events)
 
-        st.write("Shots Barplot for the season")
+        st.write(f"Shots Barplot for the season {selected_season} against ", selected_opponent)
         plotShotsBarPlot(selected_opponent_match_events)
+
+
+
+
 
         
 
