@@ -362,23 +362,25 @@ def plotShotsBarPlot(df):
 def plotShotHeatMap(df):
     df_shots = df[df['type_name'] == 'Shot']
     df_shots = df_shots[df_shots['player_name'] == players_dict[selected_player]]
-    unique_match_id = len(df_shots['match_id'].unique())
-
-    #plot vertical pitch
-    pitch = Pitch(line_zorder=2, line_color='black')
-    fig, ax = pitch.grid(grid_height=0.9, title_height=0.06, axis=False,
-                        endnote_height=0.04, title_space=0, endnote_space=0)
-    #get the 2D histogram
-    bin_statistic = pitch.bin_statistic(df_shots.x, df_shots.y, statistic='count', bins=(6, 5), normalize=False)
-    #normalize by number of games
-    bin_statistic["statistic"] = bin_statistic["statistic"]/unique_match_id
-    #make a heatmap
-    pcm  = pitch.heatmap(bin_statistic, cmap='Reds', edgecolor='grey', ax=ax['pitch'])
-    #legend to our plot
-    ax_cbar = fig.add_axes((1, 0.093, 0.03, 0.786))
-    cbar = plt.colorbar(pcm, cax=ax_cbar)
-    fig.suptitle(f'Shots heatmap of {selected_player} against {selected_opponent} at home and away', fontsize = 30)
-    st.pyplot(fig)
+    if len(df_shots > 0):
+        unique_match_id = len(df_shots['match_id'].unique())
+        #plot vertical pitch
+        pitch = Pitch(line_zorder=2, line_color='black')
+        fig, ax = pitch.grid(grid_height=0.9, title_height=0.06, axis=False,
+                            endnote_height=0.04, title_space=0, endnote_space=0)
+        #get the 2D histogram
+        bin_statistic = pitch.bin_statistic(df_shots.x, df_shots.y, statistic='count', bins=(6, 5), normalize=False)
+        #normalize by number of games
+        bin_statistic["statistic"] = bin_statistic["statistic"]/unique_match_id
+        #make a heatmap
+        pcm  = pitch.heatmap(bin_statistic, cmap='Reds', edgecolor='grey', ax=ax['pitch'])
+        #legend to our plot
+        ax_cbar = fig.add_axes((1, 0.093, 0.03, 0.786))
+        cbar = plt.colorbar(pcm, cax=ax_cbar)
+        fig.suptitle(f'Shots heatmap of {selected_player} against {selected_opponent} at home and away', fontsize = 30)
+        st.pyplot(fig)
+    else:
+        st.write("player did not account for any shots during the game")
 
 ### 6. Creating plots for goals
 
