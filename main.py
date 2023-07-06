@@ -288,11 +288,11 @@ def plotDangerousPlayerPlots(df):
     #count passes by player and normalize them
     pass_count = df.groupby(["player_name"]).x.count()
     #make a histogram
-    ax = pass_count.plot.bar(pass_count)
+    fig, ax = pass_count.plot.bar(pass_count)
     #make legend
     ax.set_xlabel("")
     ax.set_ylabel("Number of danger passes per game")
-    st.pyplot(ax)
+    st.pyplot(fig)
 
 
 ### 5. Creating plots for Shots
