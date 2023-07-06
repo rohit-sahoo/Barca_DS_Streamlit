@@ -267,6 +267,8 @@ def getPassingHeatMap(df):
         #concatenate dataframe with a previous one to keep danger passes from the whole tournament
         danger_passes = pd.concat([danger_passes, danger_passes_period], ignore_index = True)
 
+        plotDangerousPlayerPlots(danger_passes)
+
     #plot vertical pitch
     pitch = Pitch(line_zorder=2, line_color='black')
     fig, ax = pitch.grid(grid_height=0.9, title_height=0.06, axis=False,
@@ -299,7 +301,7 @@ def plotDangerousPlayerPlots(df):
     # Set plot title and labels
     ax.set_title("Passes by Player")
     ax.set_xlabel("Player")
-    ax.set_ylabel("Pass Count")
+    ax.set_ylabel("Key Passes Count")
 
     # Rotate the x-axis labels for better readability
     plt.xticks(rotation=90)
@@ -347,12 +349,6 @@ if selected_analysis:
 
         st.write("Passing heatmap - Most dangerous passes heatmap at away")
         df_dangerPasses_away = getPassingHeatMap(away_events)
-
-        st.write("Most Dangerous passes at home")
-        plotDangerousPlayerPlots(df_dangerPasses_home)
-
-        st.write("Most Dangerous passes at away")
-        plotDangerousPlayerPlots(df_dangerPasses_away)
 
 
 
