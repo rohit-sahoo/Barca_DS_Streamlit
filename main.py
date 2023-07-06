@@ -6,6 +6,7 @@ import numpy as np
 
 parser = Sbopen()
 team = "Barcelona"
+
 st.subheader("Here, we have La Liga data of all the Matches played by Barcelona in the Lionel Messi era")
 df_competition = parser.competition()
 
@@ -233,8 +234,6 @@ def getPlayersPassesPlot(df):
 def getPassingHeatMap(df):
     #declare an empty dataframe
     danger_passes = pd.DataFrame()
-    #open the event data from this game
-    df = parser.event(df['match_id'])[0]
     for period in [1, 2]:
         #keep only accurate passes by England that were not set pieces in this period
         mask_pass = (df.team_name == team) & (df.type_name == "Pass") & (df.outcome_name.isnull()) & (df.period == period) & (df.sub_type_name.isnull())
