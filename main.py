@@ -288,10 +288,12 @@ def plotDangerousPlayerPlots(df):
     #count passes by player and normalize them
     pass_count = df.groupby(["player_name"]).x.count()
     #make a histogram
-    fig, ax = pass_count.plot.bar(pass_count)
-    #make legend
-    ax.set_xlabel("")
-    ax.set_ylabel("Number of danger passes per game")
+    fig, ax = plt.subplots()
+    ax.bar()
+    ax.scatter(pass_count)
+    # Rotate the x-axis labels for better readability
+    plt.xticks(rotation=90)
+    # Show the plot in Streamlit app
     st.pyplot(fig)
 
 
