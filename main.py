@@ -362,7 +362,7 @@ def plotShotsBarPlot(df):
 def plotShotHeatMap(df):
     df_shots = df[df['type_name'] == 'Shot']
     df_shots = df_shots[df_shots['player_name'] == players_dict[selected_player]]
-    if len(df_shots > 0):
+    if len(df_shots) > 0:
         unique_match_id = len(df_shots['match_id'].unique())
         #plot vertical pitch
         pitch = Pitch(line_zorder=2, line_color='black')
@@ -385,15 +385,15 @@ def plotShotHeatMap(df):
 def plotShotsForSelectedPlayer(df):
 
     shot_mask = (df.type_name == 'Shot') & (df.player_name == players_dict[selected_player])
-    df_pass = df.loc[shot_mask, ['x', 'y', 'end_x', 'end_y']]
+    df_shot = df.loc[shot_mask, ['x', 'y', 'end_x', 'end_y']]
 
-    if len(df_pass)>0:
+    if len(df_shot)>0:
         pitch = Pitch(line_color='black')
         fig, ax = pitch.grid(grid_height=0.9, title_height=0.06, axis=False,
                             endnote_height=0.04, title_space=0, endnote_space=0)
-        pitch.arrows(df_pass.x, df_pass.y,
-                    df_pass.end_x, df_pass.end_y, color = "blue", ax=ax['pitch'])
-        pitch.scatter(df_pass.x, df_pass.y, alpha = 0.2, s = 500, color = "blue", ax=ax['pitch'])
+        pitch.arrows(df_shot.x, df_shot.y,
+                    df_shot.end_x, df_shot.end_y, color = "blue", ax=ax['pitch'])
+        pitch.scatter(df_shot.x, df_shot.y, alpha = 0.2, s = 500, color = "blue", ax=ax['pitch'])
         fig.suptitle(f"{selected_player} shots against {selected_opponent}", fontsize = 30)
         st.pyplot(fig)
 
