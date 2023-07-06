@@ -382,6 +382,25 @@ def plotShotHeatMap(df):
     else:
         st.write("player did not account for any shots during the game")
 
+def plotShotsForSelectedPlayer(df):
+
+    shot_mask = (df.type_name == 'Shot') & (df.player_name == players_dict[selected_player])
+    df_pass = df.loc[shot_mask, ['x', 'y', 'end_x', 'end_y']]
+
+    if len(df_pass)>0:
+        pitch = Pitch(line_color='black')
+        fig, ax = pitch.grid(grid_height=0.9, title_height=0.06, axis=False,
+                            endnote_height=0.04, title_space=0, endnote_space=0)
+        pitch.arrows(df_pass.x, df_pass.y,
+                    df_pass.end_x, df_pass.end_y, color = "blue", ax=ax['pitch'])
+        pitch.scatter(df_pass.x, df_pass.y, alpha = 0.2, s = 500, color = "blue", ax=ax['pitch'])
+        fig.suptitle(f"{selected_player} shots against {selected_opponent}", fontsize = 30)
+        st.pyplot(fig)
+
+    else:
+        st.write("Player had zero passes throughout the game, this could also mean that player was not substituted in the match or was not in the starting eleven")
+
+
 ### 6. Creating plots for goals
 
 if selected_season:
@@ -432,6 +451,9 @@ if selected_analysis:
 
         st.write("Shots heat map for home and away game")
         plotShotHeatMap(selected_opponent_match_events)
+
+        st.write("Plotting shots for ", selected_player)
+        plotShotsForSelectedPlayer(selected_opponent_match_events)
         
         st.write("Plotting shots for the match at home")
         plotShots(home_events)
@@ -441,6 +463,7 @@ if selected_analysis:
 
         st.write(f"Shots Barplot for the season {selected_season} against ", selected_opponent)
         plotShotsBarPlot(selected_opponent_match_events)
+
 
 
 
