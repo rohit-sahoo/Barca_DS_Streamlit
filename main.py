@@ -388,12 +388,25 @@ def plotShotsForSelectedPlayer(df):
     df_shot = df.loc[shot_mask, ['x', 'y', 'end_x', 'end_y']]
 
     if len(df_shot)>0:
+
+        # Find rows where 'outcome_name' is 'Goal'
+        goal_rows = df_shots[df_shots['outcome_name'] == 'Goal']
+
+        # Remove the goal rows from df_shots
+        df_shots = df_shots[df_shots['outcome_name'] != 'Goal']
+
+        # Create a new DataFrame df_goals with the goal rows
+        df_goals = pd.DataFrame(goal_rows)
+
         pitch = Pitch(line_color='black')
         fig, ax = pitch.grid(grid_height=0.9, title_height=0.06, axis=False,
                             endnote_height=0.04, title_space=0, endnote_space=0)
         pitch.arrows(df_shot.x, df_shot.y,
                     df_shot.end_x, df_shot.end_y, color = "blue", ax=ax['pitch'])
+        pitch.arrows(df_goals.x, df_goals.y,
+                    df_goals.end_x, df_goals.end_y, color = "red", ax=ax['pitch'])
         pitch.scatter(df_shot.x, df_shot.y, alpha = 0.2, s = 500, color = "blue", ax=ax['pitch'])
+        pitch.scatter(df_goals.x, df_goals.y, alpha = 0.2, s = 500, color = "red", ax=ax['pitch'])
         fig.suptitle(f"{selected_player} shots against {selected_opponent}", fontsize = 30)
         st.pyplot(fig)
 
