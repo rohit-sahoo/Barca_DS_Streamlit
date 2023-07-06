@@ -341,6 +341,15 @@ def plotShots(df):
     fig.suptitle(f"{team} (red) and {selected_opponent} (blue) shots", fontsize = 30)
     st.pyplot(fig)
 
+def plotShotsBarPlot(df):
+    # Group by 'player_name' and calculate the sum of 'shots' for each player
+    player_shots = df.groupby('player_name')['shots'].sum().reset_index()
+
+    # Sort the DataFrame by 'shots' column in descending order
+    player_shots_sorted = player_shots.sort_values('shots', ascending=False)
+
+    # Create a bar chart using Streamlit
+    st.bar_chart(player_shots_sorted.set_index('player_name'))
 
 
 ### 6. Creating plots for goals
@@ -394,9 +403,11 @@ if selected_analysis:
         st.write("Plotting shots for the match at home")
         plotShots(home_events)
 
-
-        st.write("Plotting shots for the match at home")
+        st.write("Plotting shots for the match at away")
         plotShots(away_events)
+
+        st.write("Shots Barplot for the season")
+        plotShotsBarPlot(selected_opponent_match_events)
 
         
 
