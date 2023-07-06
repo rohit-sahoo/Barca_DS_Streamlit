@@ -289,14 +289,13 @@ def getPassingHeatMap(df):
 
 
 def plotDangerousPlayerPlots(df):
-    # Keep only surnames
-    df["player_nickname"] = get_key_from_value(players_dict, df["player_name"])
+
     # Count passes by player and normalize them
-    pass_count = df.groupby("player_nickname").size().reset_index(name="pass_count")
+    pass_count = df.groupby("player_name").size().reset_index(name="pass_count")
 
     # Create a bar plot
     fig, ax = plt.subplots()
-    ax.bar(pass_count["player_nickname"], pass_count["pass_count"])
+    ax.bar(pass_count["player_name"], pass_count["pass_count"])
     
     # Set plot title and labels
     ax.set_title("Passes by Player")
