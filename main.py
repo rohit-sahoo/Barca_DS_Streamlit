@@ -343,10 +343,10 @@ def plotShots(df):
 
 def plotShotsBarPlot(df):
     # Group by 'player_name' and calculate the sum of 'shots' for each player
-    player_shots = df.groupby('player_name')['shots'].sum().reset_index()
+    player_shots = df.groupby('player_name')['Shot'].sum().reset_index()
 
     # Sort the DataFrame by 'shots' column in descending order
-    player_shots_sorted = player_shots.sort_values('shots', ascending=False)
+    player_shots_sorted = player_shots.sort_values('Shot', ascending=False)
 
     # Create a bar chart using Streamlit
     st.bar_chart(player_shots_sorted.set_index('player_name'))
