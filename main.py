@@ -361,7 +361,7 @@ def plotShotsBarPlot(df):
 
 def plotShotHeatMap(df):
     df_shots = df[df['type_name'] == 'Shot']
-    df_shots = df_shots[df_shots['player_name'] == selected_player]
+    df_shots = df_shots[df_shots['player_name'] == players_dict[selected_player]]
     unique_match_id = len(df_shots['match_id'].unique())
 
     #plot vertical pitch
