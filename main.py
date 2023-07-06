@@ -308,41 +308,38 @@ def plotDangerousPlayerPlots(df):
 ### 5. Creating plots for Shots
 
 def plotShots(df):
-
-    #A dataframe of shots
-    shots = df.loc[df['type_name'] == 'Shot'].set_index('id')
     #create pitch
     pitch = Pitch(line_color='black')
     fig, ax = pitch.grid(grid_height=0.9, title_height=0.06, axis=False,
                         endnote_height=0.04, title_space=0, endnote_space=0)
     #query
-    mask_england = (df.type_name == 'Shot') & (df.team_name == team1)
+    mask_barca = (df.type_name == 'Shot') & (df.team_name == team)
     #finding rows in the df and keeping only necessary columns
-    df_england = df.loc[mask_england, ['x', 'y', 'outcome_name', "player_name"]]
+    df_barca = df.loc[mask_barca, ['x', 'y', 'outcome_name', "player_name"]]
 
     #plot them - if shot ended with Goal - alpha 1 and add name
-    #for England
-    for i, row in df_england.iterrows():
+    #for Barcelona
+    for i, row in df_barca.iterrows():
         if row["outcome_name"] == 'Goal':
-        #make circle
-        pitch.scatter(row.x, row.y, alpha = 1, s = 500, color = "red", ax=ax['pitch'])
-        pitch.annotate(row["player_name"], (row.x + 1, row.y - 2), ax=ax['pitch'], fontsize = 12)
+            pitch.scatter(row.x, row.y, alpha = 1, s = 500, color = "red", ax=ax['pitch'])
+            pitch.annotate(row["player_name"], (row.x + 1, row.y - 2), ax=ax['pitch'], fontsize = 12)
         else:
-        pitch.scatter(row.x, row.y, alpha = 0.2, s = 500, color = "red", ax=ax['pitch'])
+            pitch.scatter(row.x, row.y, alpha = 0.2, s = 500, color = "red", ax=ax['pitch'])
 
-    mask_sweden = (df.type_name == 'Shot') & (df.team_name == team2)
-    df_sweden = df.loc[mask_sweden, ['x', 'y', 'outcome_name', "player_name"]]
+    mask_opponent = (df.type_name == 'Shot') & (df.team_name != team)
+    df_opponent = df.loc[mask_opponent, ['x', 'y', 'outcome_name', "player_name"]]
 
-    #for Sweden we need to revert coordinates
-    for i, row in df_sweden.iterrows():
+    #for opponent we need to revert coordinates
+    for i, row in df_opponent.iterrows():
         if row["outcome_name"] == 'Goal':
-        pitch.scatter(120 - row.x, 80 - row.y, alpha = 1, s = 500, color = "blue", ax=ax['pitch'])
-        pitch.annotate(row["player_name"], (120 - row.x + 1, 80 - row.y - 2), ax=ax['pitch'], fontsize = 12)
+            pitch.scatter(120 - row.x, 80 - row.y, alpha = 1, s = 500, color = "blue", ax=ax['pitch'])
+            pitch.annotate(row["player_name"], (120 - row.x + 1, 80 - row.y - 2), ax=ax['pitch'], fontsize = 12)
         else:
-        pitch.scatter(120 - row.x, 80 - row.y, alpha = 0.2, s = 500, color = "blue", ax=ax['pitch'])
+            pitch.scatter(120 - row.x, 80 - row.y, alpha = 0.2, s = 500, color = "blue", ax=ax['pitch'])
 
-    fig.suptitle("England (red) and Sweden (blue) shots", fontsize = 30)
-    plt.show()
+
+    fig.suptitle(f"{team} (red) and {selected_opponent} (blue) shots", fontsize = 30)
+    st.pyplot(fig)
 
 
 
