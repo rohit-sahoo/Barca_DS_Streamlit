@@ -387,17 +387,14 @@ def plotShotsForSelectedPlayer(df):
     shot_mask = (df.type_name == 'Shot') & (df.player_name == players_dict[selected_player])
     df_shot = df.loc[shot_mask, ['x', 'y', 'end_x', 'end_y']]
 
+    goal_mask = (df.type_name == 'Goal') & (df.player_name == players_dict[selected_player])
+    df_goals = df.loc[shot_mask, ['x', 'y', 'end_x', 'end_y']]
+
     if len(df_shot)>0:
 
-        # Find rows where 'outcome_name' is 'Goal'
-        goal_rows = df_shots[df_shots['outcome_name'] == 'Goal']
-
-        if len(goal_rows) > 0:
+        if len(df_goals) > 0:
             # Remove the goal rows from df_shots
             df_shots = df_shots[df_shots['outcome_name'] != 'Goal']
-
-            # Create a new DataFrame df_goals with the goal rows
-            df_goals = pd.DataFrame(goal_rows)
 
             pitch = Pitch(line_color='black')
             fig, ax = pitch.grid(grid_height=0.9, title_height=0.06, axis=False,
