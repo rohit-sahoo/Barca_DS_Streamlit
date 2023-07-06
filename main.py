@@ -342,14 +342,22 @@ def plotShots(df):
     st.pyplot(fig)
 
 def plotShotsBarPlot(df):
-    # Group by 'player_name' and calculate the sum of 'shots' for each player
-    player_shots = df.groupby('player_name')['Shot'].sum().reset_index()
+    df_shots = df[df['type_name'] == 'Shot']
+    player_shots = df_shots.groupby('player_name').size().reset_index(name='total_shots')
+    top_players = player_shots.nlargest(15, 'total_shots')
+    # Create a scatter plot
+    fig, ax = plt.subplots()
+    ax.scatter(top_players['player_name'], top_players['total_shots'])
 
-    # Sort the DataFrame by 'shots' column in descending order
-    player_shots_sorted = player_shots.sort_values('Shot', ascending=False)
+    # Set the plot title and labels
+    ax.set_title('Top 15 Players with Highest shots')
+    ax.set_xlabel('Player')
+    ax.set_ylabel('Number of shots')
 
-    # Create a bar chart using Streamlit
-    st.bar_chart(player_shots_sorted.set_index('player_name'))
+    # Rotate the x-axis labels for better readability
+    plt.xticks(rotation=90)
+    # Show the plot in Streamlit app
+    st.pyplot(fig)
 
 
 ### 6. Creating plots for goals
