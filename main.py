@@ -360,7 +360,9 @@ def plotShotsBarPlot(df):
     st.pyplot(fig)
 
 def plotShotHeatMap(df):
-    df_shots = df[(df['type_name'] == 'Shot') & (df['player_name'] == selected_player)]
+    df_shots = df[df['type_name'] == 'Shot']
+    df_shots = df_shots[df_shots['player_name'] == selected_player]
+    unique_match_id = len(df_shots['match_id'].unique())
 
     #plot vertical pitch
     pitch = Pitch(line_zorder=2, line_color='black')
@@ -369,7 +371,7 @@ def plotShotHeatMap(df):
     #get the 2D histogram
     bin_statistic = pitch.bin_statistic(df_shots.x, df_shots.y, statistic='count', bins=(6, 5), normalize=False)
     #normalize by number of games
-    bin_statistic["statistic"] = bin_statistic["statistic"]
+    bin_statistic["statistic"] = bin_statistic["statistic"]/unique_match_id
     #make a heatmap
     pcm  = pitch.heatmap(bin_statistic, cmap='Reds', edgecolor='grey', ax=ax['pitch'])
     #legend to our plot
