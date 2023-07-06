@@ -172,8 +172,6 @@ def getTeamPassingNetwork(df):
     st.pyplot(fig)
     #plt.show()
 
-
-
 def getSubstitutionsEvent(df):
     sub = df.loc[df["type_name"] == "Substitution"].loc[df["team_name"] == "Barcelona"].loc[df["match_id"] == df['match_id']].iloc[0]["index"]
     #make df with successfull passes by England until the first substitution
@@ -286,7 +284,6 @@ def getPassingHeatMap(df):
 
     return danger_passes
 
-
 def plotDangerousPlayerPlots(df):
 
     # Count passes by player and normalize them
@@ -309,6 +306,44 @@ def plotDangerousPlayerPlots(df):
 
 
 ### 5. Creating plots for Shots
+
+def plotShots(df):
+
+    #A dataframe of shots
+    shots = df.loc[df['type_name'] == 'Shot'].set_index('id')
+    #create pitch
+    pitch = Pitch(line_color='black')
+    fig, ax = pitch.grid(grid_height=0.9, title_height=0.06, axis=False,
+                        endnote_height=0.04, title_space=0, endnote_space=0)
+    #query
+    mask_england = (df.type_name == 'Shot') & (df.team_name == team1)
+    #finding rows in the df and keeping only necessary columns
+    df_england = df.loc[mask_england, ['x', 'y', 'outcome_name', "player_name"]]
+
+    #plot them - if shot ended with Goal - alpha 1 and add name
+    #for England
+    for i, row in df_england.iterrows():
+        if row["outcome_name"] == 'Goal':
+        #make circle
+        pitch.scatter(row.x, row.y, alpha = 1, s = 500, color = "red", ax=ax['pitch'])
+        pitch.annotate(row["player_name"], (row.x + 1, row.y - 2), ax=ax['pitch'], fontsize = 12)
+        else:
+        pitch.scatter(row.x, row.y, alpha = 0.2, s = 500, color = "red", ax=ax['pitch'])
+
+    mask_sweden = (df.type_name == 'Shot') & (df.team_name == team2)
+    df_sweden = df.loc[mask_sweden, ['x', 'y', 'outcome_name', "player_name"]]
+
+    #for Sweden we need to revert coordinates
+    for i, row in df_sweden.iterrows():
+        if row["outcome_name"] == 'Goal':
+        pitch.scatter(120 - row.x, 80 - row.y, alpha = 1, s = 500, color = "blue", ax=ax['pitch'])
+        pitch.annotate(row["player_name"], (120 - row.x + 1, 80 - row.y - 2), ax=ax['pitch'], fontsize = 12)
+        else:
+        pitch.scatter(120 - row.x, 80 - row.y, alpha = 0.2, s = 500, color = "blue", ax=ax['pitch'])
+
+    fig.suptitle("England (red) and Sweden (blue) shots", fontsize = 30)
+    plt.show()
+
 
 
 ### 6. Creating plots for goals
@@ -353,6 +388,20 @@ if selected_analysis:
 
         st.write("Most dangerous passes bar plot at away")
         plotDangerousPlayerPlots(df_dangerPasses_away)
+
+        #st.write("Passing probabilities that lead to a shot")
+        #getPassingProbability()
+
+    if selected_analysis == "Shots":
+        
+        st.write("Plotting shots for the match at home")
+        plotShots(home_events)
+
+
+        st.write("Plotting shots for the match at home")
+        plotShots(away_events)
+
+        
 
 
 
