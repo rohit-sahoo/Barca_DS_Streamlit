@@ -260,8 +260,10 @@ def getPassingHeatMap(df):
         #concatenate dataframe with a previous one to keep danger passes from the whole tournament
         danger_passes = pd.concat([danger_passes, danger_passes_period], ignore_index = True)
 
+        
 
-        #plot vertical pitch
+
+    #plot vertical pitch
     pitch = Pitch(line_zorder=2, line_color='black')
     fig, ax = pitch.grid(grid_height=0.9, title_height=0.06, axis=False,
                         endnote_height=0.04, title_space=0, endnote_space=0)
@@ -274,9 +276,23 @@ def getPassingHeatMap(df):
     #legend to our plot
     ax_cbar = fig.add_axes((1, 0.093, 0.03, 0.786))
     cbar = plt.colorbar(pcm, cax=ax_cbar)
-    fig.suptitle('Danger passes by ' + team + " per game", fontsize = 30)
+    fig.suptitle('Danger passes by ' + team , fontsize = 30)
     st.pyplot(fig)
 
+    return danger_passes
+
+
+def plotDangerousPlayerPlots(df):
+    #keep only surnames
+    df["player_name"] = df["player_name"].apply(lambda x: str(x).split()[-1])
+    #count passes by player and normalize them
+    pass_count = df.groupby(["player_name"]).x.count()
+    #make a histogram
+    ax = pass_count.plot.bar(pass_count)
+    #make legend
+    ax.set_xlabel("")
+    ax.set_ylabel("Number of danger passes per game")
+    st.pyplot(ax)
 
 
 ### 5. Creating plots for Shots
@@ -314,9 +330,16 @@ if selected_analysis:
         getPassingNetwork(selected_opponent_match_events)
 
         st.write("Passing heatmap - Most dangerous passes heatmap at home")
-        getPassingHeatMap(home_events)
+        df_dangerPasses_home = getPassingHeatMap(home_events)
 
         st.write("Passing heatmap - Most dangerous passes heatmap at away")
-        getPassingHeatMap(away_events)
+        df_dangerPasses_away = getPassingHeatMap(away_events)
+
+        st.write("Most Dangerous passes at home")
+        plotDangerousPlayerPlots(df_dangerPasses_home)
+
+        st.write("Most Dangerous passes at away")
+        plotDangerousPlayerPlots(df_dangerPasses_away)
+
 
 
