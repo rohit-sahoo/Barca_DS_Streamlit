@@ -197,7 +197,7 @@ def getPassingNetwork(df):
 
 def get_key_from_value(dictionary, value):
     for key, val in dictionary.items():
-        if val == value:
+        if (val == value).any():
             return key
     return None
 
@@ -266,9 +266,6 @@ def getPassingHeatMap(df):
         danger_passes_period = passes.loc[pass_to_shot]
         #concatenate dataframe with a previous one to keep danger passes from the whole tournament
         danger_passes = pd.concat([danger_passes, danger_passes_period], ignore_index = True)
-
-        
-
 
     #plot vertical pitch
     pitch = Pitch(line_zorder=2, line_color='black')
