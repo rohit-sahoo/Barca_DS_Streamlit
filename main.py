@@ -354,123 +354,126 @@ def plotPasseswithShotEnd(df,unique_possessions,passes):
         st.pyplot(fig)
 
 def passingProbabilityPlots(df):
-    unique_possessions = df[df['type_name'] == 'Shot']['possession'].unique()
-    df_filtered = pd.DataFrame()
+    unique_possessions = df[(df['type_name'] == 'Shot') & (df['player_name'] == players_dict[selected_player])]['possession'].unique()
+    if len(unique_possessions)>0:
+        df_filtered = pd.DataFrame()
 
-    for possession in unique_possessions:
-        first_row_index = df.loc[df['possession'] == possession].index[0]
-        index_shot = df.loc[(df['possession'] == possession) & (df['type_name'] == 'Shot')].index
-        if len(index_shot) > 0:
-            df_copy = df.copy()
-            df_selected = df_copy[first_row_index:index_shot[0].item() + 1]
-            df_filtered = pd.concat([df_filtered, df_selected], ignore_index=True)
+        for possession in unique_possessions:
+            first_row_index = df.loc[df['possession'] == possession].index[0]
+            index_shot = df.loc[(df['possession'] == possession) & (df['type_name'] == 'Shot')].index
+            if len(index_shot) > 0:
+                df_copy = df.copy()
+                df_selected = df_copy[first_row_index:index_shot[0].item() + 1]
+                df_filtered = pd.concat([df_filtered, df_selected], ignore_index=True)
 
-    df_filtered.reset_index(drop=True, inplace=True)
+        df_filtered.reset_index(drop=True, inplace=True)
 
 
-    df_filtered2 = df_filtered.copy()
+        df_filtered2 = df_filtered.copy()
 
-    for possession in unique_possessions:
-        possession_mask = df_filtered2['possession'] == possession
+        for possession in unique_possessions:
+            possession_mask = df_filtered2['possession'] == possession
+            try:
+                shot_xg = df_filtered2.loc[possession_mask & (df_filtered2['type_name'] == 'Shot'), 'shot_statsbomb_xg'].values[0]
+                df_filtered2.loc[possession_mask, 'xG'] = shot_xg
+            except IndexError:
+                print("no shots found in filtered dataframe")
+
+        df2 = df.copy()
+        df2 = df2[~df2['possession'].isin(unique_possessions)]
+        df2 = pd.concat([df2, df_filtered2], ignore_index=True)
+
+        df2['shot_end'] = df2['possession'].isin(unique_possessions).astype(int)
+
+        df3 = df2.copy()
+
+        #columns with coordinates
+        df3["x0"] = df3['x']
+        df3["c0"] = abs(40 - df2['y']) 
+        df3["x1"] = df3['end_x']
+        df3["c1"] = abs(40 - df2['end_y']) 
+
+
+        #for plotting
+        df3["y0"] = df3['y']
+        df3["y1"] = df3['end_y']
+
+
+        #model variables
+        var = ["x0", "x1", "c0", "c1"]
+
+        #combinations
+        inputs = []
+        #one variable combinations
+        inputs.extend(combinations_with_replacement(var, 1))
+        #2 variable combinations
+        inputs.extend(combinations_with_replacement(var, 2))
+        #3 variable combinations
+        inputs.extend(combinations_with_replacement(var, 3))
+
+        #make new columns
+        for i in inputs:
+            #columns length 1 already exist
+            if len(i) > 1:
+                #column name
+                column = ''
+                x = 1
+                for c in i:
+                    #add column name to be x0x1c0 for example
+                    column += c
+                    #multiply values in column
+                    x = x*df3[c]
+                #create a new column in df
+                df3[column] = x
+                #add column to model variables
+                var.append(column)
+
+
+
+        passes = df3.loc[df3["type_name"].isin(["Pass"])]
+
+        X = passes[var].values 
+        y = passes["shot_end"].values
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = 123, stratify = y)
+        model = xgboost.XGBClassifier(n_estimators = 100, ccp_alpha=0, max_depth=4, min_samples_leaf=10,
+                            random_state=123)
+
+
+        scores = cross_val_score(estimator = model, X = X_train, y = y_train, cv = 10, n_jobs = -1)
+        #print(np.mean(scores), np.std(scores))
+        model.fit(X_train, y_train)
+        #print(model.score(X_train, y_train))
+        y_pred = model.predict(X_test)
+        #print(model.score(X_test, y_test))
+
+
+        #predict if ended with shot
+        passes = df3.loc[df3["type_name"].isin(["Pass"])]
+        X = passes[var].values
+        y = passes["shot_end"].values
+
+        #predict probability of shot ended
+        y_pred_proba = model.predict_proba(X)[::,1]
+
+        passes["shot_prob"] = y_pred_proba
+        #OLS
         try:
-            shot_xg = df_filtered2.loc[possession_mask & (df_filtered2['type_name'] == 'Shot'), 'shot_statsbomb_xg'].values[0]
-            df_filtered2.loc[possession_mask, 'xG'] = shot_xg
-        except IndexError:
-            print("no shots found in filtered dataframe")
+            shot_ended = passes.loc[passes["shot_end"] == 1]
+            X2 = shot_ended[var].values
+            y2 = shot_ended["xG"].values
+            lr = LinearRegression()
+            lr.fit(X2, y2)
+            y_pred = lr.predict(X)
+            passes["xG_pred"] = y_pred
+            #calculate xGchain
+            passes["xT"] = passes["xG_pred"]*passes["shot_prob"]
 
-    df2 = df.copy()
-    df2 = df2[~df2['possession'].isin(unique_possessions)]
-    df2 = pd.concat([df2, df_filtered2], ignore_index=True)
-
-    df2['shot_end'] = df2['possession'].isin(unique_possessions).astype(int)
-
-    df3 = df2.copy()
-
-    #columns with coordinates
-    df3["x0"] = df3['x']
-    df3["c0"] = abs(40 - df2['y']) 
-    df3["x1"] = df3['end_x']
-    df3["c1"] = abs(40 - df2['end_y']) 
-
-
-    #for plotting
-    df3["y0"] = df3['y']
-    df3["y1"] = df3['end_y']
-
-
-    #model variables
-    var = ["x0", "x1", "c0", "c1"]
-
-    #combinations
-    inputs = []
-    #one variable combinations
-    inputs.extend(combinations_with_replacement(var, 1))
-    #2 variable combinations
-    inputs.extend(combinations_with_replacement(var, 2))
-    #3 variable combinations
-    inputs.extend(combinations_with_replacement(var, 3))
-
-    #make new columns
-    for i in inputs:
-        #columns length 1 already exist
-        if len(i) > 1:
-            #column name
-            column = ''
-            x = 1
-            for c in i:
-                #add column name to be x0x1c0 for example
-                column += c
-                #multiply values in column
-                x = x*df3[c]
-            #create a new column in df
-            df3[column] = x
-            #add column to model variables
-            var.append(column)
-
-
-
-    passes = df3.loc[df3["type_name"].isin(["Pass"])]
-
-    X = passes[var].values 
-    y = passes["shot_end"].values
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = 123, stratify = y)
-    model = xgboost.XGBClassifier(n_estimators = 100, ccp_alpha=0, max_depth=4, min_samples_leaf=10,
-                        random_state=123)
-
-
-    scores = cross_val_score(estimator = model, X = X_train, y = y_train, cv = 10, n_jobs = -1)
-    #print(np.mean(scores), np.std(scores))
-    model.fit(X_train, y_train)
-    #print(model.score(X_train, y_train))
-    y_pred = model.predict(X_test)
-    #print(model.score(X_test, y_test))
-
-
-    #predict if ended with shot
-    passes = df3.loc[df3["type_name"].isin(["Pass"])]
-    X = passes[var].values
-    y = passes["shot_end"].values
-
-    #predict probability of shot ended
-    y_pred_proba = model.predict_proba(X)[::,1]
-
-    passes["shot_prob"] = y_pred_proba
-    #OLS
-    try:
-        shot_ended = passes.loc[passes["shot_end"] == 1]
-        X2 = shot_ended[var].values
-        y2 = shot_ended["xG"].values
-        lr = LinearRegression()
-        lr.fit(X2, y2)
-        y_pred = lr.predict(X)
-        passes["xG_pred"] = y_pred
-        #calculate xGchain
-        passes["xT"] = passes["xG_pred"]*passes["shot_prob"]
-
-        passes[["xG_pred", "shot_prob", "xT"]].head(5)
-        plotPasseswithShotEnd(df3,unique_possessions,passes)
-    except:
-        print("Error with model building")
+            passes[["xG_pred", "shot_prob", "xT"]].head(5)
+            plotPasseswithShotEnd(df3,unique_possessions,passes)
+        except:
+            print("Error with model building")
+    else:
+        st.write("Player had zero shots")
     
 
 ### 5. Creating plots for Shots
