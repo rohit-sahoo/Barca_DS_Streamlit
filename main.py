@@ -625,7 +625,7 @@ if selected_analysis:
 
         st.write("Passes that lead to a shot with its probabilities")
         for uniqueMatchID in selected_opponent_match_events['match_id'].unique():
-            passingProbabilityPlots(selected_opponent_match_events['uniqueMatchID'])
+            passingProbabilityPlots(selected_opponent_match_events[uniqueMatchID])
 
     if selected_analysis == "Shots":
 
@@ -646,7 +646,7 @@ if selected_analysis:
 
         st.write("Passes that lead to a shot with its probabilities")
         for uniqueMatchID in selected_opponent_match_events['match_id'].unique():
-            passingProbabilityPlots(selected_opponent_match_events['uniqueMatchID'])
+            passingProbabilityPlots(selected_opponent_match_events[uniqueMatchID])
 
 
 
