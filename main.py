@@ -360,7 +360,6 @@ def passingProbabilityPlots(df):
     for possession in unique_possessions:
         first_row_index = df.loc[df['possession'] == possession].index[0]
         index_shot = df.loc[(df['possession'] == possession) & (df['type_name'] == 'Shot')].index
-        index_shot_final = index_shot_final
         if len(index_shot) > 0:
             df_copy = df.copy()
             df_selected = df_copy[first_row_index:index_shot[0].item() + 1]
