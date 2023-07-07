@@ -456,18 +456,21 @@ def passingProbabilityPlots(df):
 
     passes["shot_prob"] = y_pred_proba
     #OLS
-    shot_ended = passes.loc[passes["shot_end"] == 1]
-    X2 = shot_ended[var].values
-    y2 = shot_ended["xG"].values
-    lr = LinearRegression()
-    lr.fit(X2, y2)
-    y_pred = lr.predict(X)
-    passes["xG_pred"] = y_pred
-    #calculate xGchain
-    passes["xT"] = passes["xG_pred"]*passes["shot_prob"]
+    try:
+        shot_ended = passes.loc[passes["shot_end"] == 1]
+        X2 = shot_ended[var].values
+        y2 = shot_ended["xG"].values
+        lr = LinearRegression()
+        lr.fit(X2, y2)
+        y_pred = lr.predict(X)
+        passes["xG_pred"] = y_pred
+        #calculate xGchain
+        passes["xT"] = passes["xG_pred"]*passes["shot_prob"]
 
-    passes[["xG_pred", "shot_prob", "xT"]].head(5)
-    plotPasseswithShotEnd(df3,unique_possessions,passes)
+        passes[["xG_pred", "shot_prob", "xT"]].head(5)
+        plotPasseswithShotEnd(df3,unique_possessions,passes)
+    except:
+        print("Error with model building")
     
 
 ### 5. Creating plots for Shots
