@@ -360,6 +360,7 @@ def passingProbabilityPlots(df):
     for possession in unique_possessions:
         first_row_index = df.loc[df['possession'] == possession].index[0]
         index_shot = df.loc[(df['possession'] == possession) & (df['type_name'] == 'Shot')].index
+        index_shot_final = index_shot_final
         if len(index_shot) > 0:
             df_copy = df.copy()
             df_selected = df_copy[first_row_index:index_shot[0].item() + 1]
@@ -372,8 +373,11 @@ def passingProbabilityPlots(df):
 
     for possession in unique_possessions:
         possession_mask = df_filtered2['possession'] == possession
-        shot_xg = df_filtered2.loc[possession_mask & (df_filtered2['type_name'] == 'Shot'), 'shot_statsbomb_xg'].values[0]
-        df_filtered2.loc[possession_mask, 'xG'] = shot_xg
+        try:
+            shot_xg = df_filtered2.loc[possession_mask & (df_filtered2['type_name'] == 'Shot'), 'shot_statsbomb_xg'].values[0]
+            df_filtered2.loc[possession_mask, 'xG'] = shot_xg
+        except IndexError:
+            print("no shots found in filtered dataframe")
 
     df2 = df.copy()
     df2 = df2[~df2['possession'].isin(unique_possessions)]
