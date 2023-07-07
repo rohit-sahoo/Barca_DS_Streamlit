@@ -311,7 +311,6 @@ def plotDangerousPlayerPlots(df):
 
 
 def plotPasseswithShotEnd(df,unique_possessions,passes):
-
     for i in unique_possessions:
         # plot possession chain that ended with shot
         chain = df.loc[df["possession"] == i]
@@ -346,8 +345,6 @@ def plotPasseswithShotEnd(df,unique_possessions,passes):
             size = 15 * (xT_value / max_value)  # Adjust the size based on xT value
             ax['pitch'].text(arrow_x, arrow_y, f"{xT_value:.3f}", color="Red", ha='center', va='center',fontsize = size)
 
-        
-        
         # shot
         pitch.arrows(shot.x0, shot.y0, shot.x1, shot.y1, color="red", ax=ax['pitch'], zorder=3)
         # other passes like arrows
@@ -357,7 +354,6 @@ def plotPasseswithShotEnd(df,unique_possessions,passes):
         st.pyplot(fig)
 
 def passingProbabilityPlots(df):
-
     unique_possessions = df[df['type_name'] == 'Shot']['possession'].unique()
     df_filtered = pd.DataFrame()
 
@@ -628,7 +624,8 @@ if selected_analysis:
         plotDangerousPlayerPlots(df_dangerPasses_away)
 
         st.write("Passes that lead to a shot with its probabilities")
-        passingProbabilityPlots(selected_opponent_match_events)
+        for uniqueMatchID in selected_opponent_match_events['match_id'].unique():
+            passingProbabilityPlots(selected_opponent_match_events['uniqueMatchID'])
 
     if selected_analysis == "Shots":
 
@@ -648,7 +645,8 @@ if selected_analysis:
         plotShotsBarPlot(selected_opponent_match_events)
 
         st.write("Passes that lead to a shot with its probabilities")
-        passingProbabilityPlots(selected_opponent_match_events)
+        for uniqueMatchID in selected_opponent_match_events['match_id'].unique():
+            passingProbabilityPlots(selected_opponent_match_events['uniqueMatchID'])
 
 
 
