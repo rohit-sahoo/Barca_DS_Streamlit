@@ -362,7 +362,7 @@ def passingProbabilityPlots(df):
         index_shot = df.loc[(df['possession'] == possession) & (df['type_name'] == 'Shot')].index
         if len(index_shot) > 0:
             df_copy = df.copy()
-            df_selected = df_copy[first_row_index:index_shot.item() + 1]
+            df_selected = df_copy[first_row_index:index_shot + 1]
             df_filtered = pd.concat([df_filtered, df_selected], ignore_index=True)
 
     df_filtered.reset_index(drop=True, inplace=True)
