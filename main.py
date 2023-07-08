@@ -434,6 +434,7 @@ def passingProbabilityPlots(df):
 
         X = passes[var].values 
         y = passes["shot_end"].values
+        print(f"elements in Y are: {y}")
         if len(set(y))>=2 :
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = 123, stratify = y)
             model = xgboost.XGBClassifier(n_estimators = 100, ccp_alpha=0, max_depth=4, min_samples_leaf=10,
