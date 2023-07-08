@@ -114,7 +114,7 @@ def getPassesPerPlayerCount(df):
 
     # Create a scatter plot
     fig, ax = plt.subplots()
-    ax.scatter(top_players_sorted['player_name'], top_players_sorted['total_passes'])
+    ax.scatter(get_key_from_value(players_dict,top_players_sorted['player_name']), top_players_sorted['total_passes'])
 
     # Set the plot title and labels
     ax.set_title('Top 15 Players with Highest Passes')
@@ -159,7 +159,7 @@ def getTeamPassingNetwork(df):
                         endnote_height=0.04, title_space=0, endnote_space=0)
     pitch.scatter(scatter_df.x, scatter_df.y, s=scatter_df.marker_size, color='red', edgecolors='grey', linewidth=1, alpha=1, ax=ax["pitch"], zorder = 3)
     for i, row in scatter_df.iterrows():
-        pitch.annotate(row.player_name, xy=(row.x, row.y), c='black', va='center', ha='center', weight = "bold", size=16, ax=ax["pitch"], zorder = 4)
+        pitch.annotate(get_key_from_value(players_dict,row.player_name), xy=(row.x, row.y), c='black', va='center', ha='center', weight = "bold", size=16, ax=ax["pitch"], zorder = 4)
 
     for i, row in lines_df.iterrows():
             player1 = row["pair_key"].split("_")[0]
@@ -497,7 +497,7 @@ def plotShots(df):
     for i, row in df_barca.iterrows():
         if row["outcome_name"] == 'Goal':
             pitch.scatter(row.x, row.y, alpha = 1, s = 500, color = "red", ax=ax['pitch'])
-            pitch.annotate(row["player_name"], (row.x + 1, row.y - 2), ax=ax['pitch'], fontsize = 12)
+            pitch.annotate(get_key_from_value(players_dict,row['player_name']), (row.x + 1, row.y - 2), ax=ax['pitch'], fontsize = 12)
         else:
             pitch.scatter(row.x, row.y, alpha = 0.2, s = 500, color = "red", ax=ax['pitch'])
 
@@ -508,7 +508,7 @@ def plotShots(df):
     for i, row in df_opponent.iterrows():
         if row["outcome_name"] == 'Goal':
             pitch.scatter(120 - row.x, 80 - row.y, alpha = 1, s = 500, color = "blue", ax=ax['pitch'])
-            pitch.annotate(row["player_name"], (120 - row.x + 1, 80 - row.y - 2), ax=ax['pitch'], fontsize = 12)
+            pitch.annotate(get_key_from_value(players_dict,row['player_name']), (120 - row.x + 1, 80 - row.y - 2), ax=ax['pitch'], fontsize = 12)
         else:
             pitch.scatter(120 - row.x, 80 - row.y, alpha = 0.2, s = 500, color = "blue", ax=ax['pitch'])
 
@@ -524,7 +524,7 @@ def plotShotsBarPlot(df):
 
     # Create a scatter plot
     fig, ax = plt.subplots()
-    ax.scatter(top_players_sorted['player_name'], top_players_sorted['total_shots'])
+    ax.scatter(get_key_from_value(players_dict,top_players_sorted['player_name']), top_players_sorted['total_shots'])
 
     # Set the plot title and labels
     ax.set_title('Top 15 Players with Highest shots')
