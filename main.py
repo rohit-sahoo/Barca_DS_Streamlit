@@ -571,7 +571,7 @@ def plotShots(df):
     for i, row in df_barca.iterrows():
         if row["outcome_name"] == 'Goal':
             pitch.scatter(row.x, row.y, alpha = 1, s = 500, color = "red", ax=ax['pitch'])
-            pitch.annotate(get_key_from_value(players_dict,row['player_name']), (row.x + 1, row.y - 2), ax=ax['pitch'], fontsize = 12)
+            pitch.annotate(row.player_name, (row.x + 1, row.y - 2), ax=ax['pitch'], fontsize = 12)
         else:
             pitch.scatter(row.x, row.y, alpha = 0.2, s = 500, color = "red", ax=ax['pitch'])
 
@@ -582,7 +582,7 @@ def plotShots(df):
     for i, row in df_opponent.iterrows():
         if row["outcome_name"] == 'Goal':
             pitch.scatter(120 - row.x, 80 - row.y, alpha = 1, s = 500, color = "blue", ax=ax['pitch'])
-            pitch.annotate(get_key_from_value(players_dict,row['player_name']), (120 - row.x + 1, 80 - row.y - 2), ax=ax['pitch'], fontsize = 12)
+            pitch.annotate(row.player_name, (120 - row.x + 1, 80 - row.y - 2), ax=ax['pitch'], fontsize = 12)
         else:
             pitch.scatter(120 - row.x, 80 - row.y, alpha = 0.2, s = 500, color = "blue", ax=ax['pitch'])
 
