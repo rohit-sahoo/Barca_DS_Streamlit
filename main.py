@@ -202,7 +202,7 @@ def getPassingNetwork(df):
 
 def get_key_from_value(dictionary, value):
     for key, val in dictionary.items():
-        if (val == value).any():
+        if (val == value):
             return key
     return None
 
