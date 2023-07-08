@@ -114,7 +114,7 @@ def getPassesPerPlayerCount(df):
 
     # Create a scatter plot
     fig, ax = plt.subplots()
-    ax.scatter(get_key_from_value(players_dict,top_players_sorted['player_name']), top_players_sorted['total_passes'])
+    ax.scatter(get_key_from_value_series(players_dict,top_players_sorted['player_name']), top_players_sorted['total_passes'])
 
     # Set the plot title and labels
     ax.set_title('Top 15 Players with Highest Passes')
@@ -203,6 +203,13 @@ def getPassingNetwork(df):
 def get_key_from_value(dictionary, value):
     for key, val in dictionary.items():
         if (val == value):
+            return key
+    return None
+
+
+def get_key_from_value_series(dictionary, value):
+    for key, val in dictionary.items():
+        if (val == value).any():
             return key
     return None
 
@@ -524,7 +531,7 @@ def plotShotsBarPlot(df):
 
     # Create a scatter plot
     fig, ax = plt.subplots()
-    ax.scatter(get_key_from_value(players_dict,top_players_sorted['player_name']), top_players_sorted['total_shots'])
+    ax.scatter(get_key_from_value_series(players_dict,top_players_sorted['player_name']), top_players_sorted['total_shots'])
 
     # Set the plot title and labels
     ax.set_title('Top 15 Players with Highest shots')
