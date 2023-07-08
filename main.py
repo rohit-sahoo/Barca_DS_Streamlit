@@ -165,11 +165,10 @@ def getPassesPerPlayerCount(df):
     player_passes = df.groupby('player_name').size().reset_index(name='total_passes')
     top_players = player_passes.nlargest(15, 'total_passes')
     top_players_sorted = top_players.sort_values('total_passes', ascending=False)
-    df_nickname = getPlayersNickname(top_players_sorted,players_dict_nickname)
 
     # Create a scatter plot
     fig, ax = plt.subplots()
-    ax.scatter(df_nickname['nickname'], top_players_sorted['total_passes'])
+    ax.scatter(top_players_sorted['player_name'], top_players_sorted['total_passes'])
 
     # Set the plot title and labels
     ax.set_title('Top 15 Players with Highest Passes')
@@ -186,25 +185,24 @@ def getTeamPassingNetwork(df):
     #adjusting that only the surname of a player is presented.
     df_pass["player_name"] = df_pass["player_name"].apply(lambda x: str(x).split()[-1])
     df_pass["pass_recipient_name"] = df_pass["pass_recipient_name"].apply(lambda x: str(x).split()[-1])
-    df_nickname = getPlayersNickname_PN(df_pass,players_dict_nickname)
     scatter_df = pd.DataFrame()
-    for i, name in enumerate(df_nickname["player_name_nickname_values"].unique()):
-        passx = df_nickname.loc[df_nickname["player_name"] == name]["x"].to_numpy()
-        recx = df_nickname.loc[df_nickname["pass_recipient_name"] == name]["end_x"].to_numpy()
-        passy = df_nickname.loc[df_nickname["player_name_nickname_values"] == name]["y"].to_numpy()
-        recy = df_nickname.loc[df_nickname["pass_recipient_name"] == name]["end_y"].to_numpy()
-        scatter_df.at[i, "player_name_nickname_values"] = name
+    for i, name in enumerate(df_pass["player_name"].unique()):
+        passx = df_pass.loc[df_pass["player_name"] == name]["x"].to_numpy()
+        recx = df_pass.loc[df_pass["pass_recipient_name"] == name]["end_x"].to_numpy()
+        passy = df_pass.loc[df_pass["player_name"] == name]["y"].to_numpy()
+        recy = df_pass.loc[df_pass["pass_recipient_name"] == name]["end_y"].to_numpy()
+        scatter_df.at[i, "player_name"] = name
         #make sure that x and y location for each circle representing the player is the average of passes and receptions
         scatter_df.at[i, "x"] = np.mean(np.concatenate([passx, recx]))
         scatter_df.at[i, "y"] = np.mean(np.concatenate([passy, recy]))
         #calculate number of passes
-        scatter_df.at[i, "no"] = df_nickname.loc[df_nickname["player_name_nickname_values"] == name].count().iloc[0]
+        scatter_df.at[i, "no"] = df_pass.loc[df_pass["player_name"] == name].count().iloc[0]
 
     #adjust the size of a circle so that the player who made more passes
     scatter_df['marker_size'] = (scatter_df['no'] / scatter_df['no'].max() * 1500)
     #counting passes between players
-    df_nickname["pair_key"] = df_nickname.apply(lambda x: "_".join(sorted([x["player_name_nickname_values"], x["pass_recipient_name"]])), axis=1)
-    lines_df = df_nickname.groupby(["pair_key"]).x.count().reset_index()
+    df_pass["pair_key"] = df_pass.apply(lambda x: "_".join(sorted([x["player_name"], x["pass_recipient_name"]])), axis=1)
+    lines_df = df_pass.groupby(["pair_key"]).x.count().reset_index()
     lines_df.rename({'x':'pass_count'}, axis='columns', inplace=True)
     #setting a treshold. You can try to investigate how it changes when you change it.
     lines_df = lines_df[lines_df['pass_count']>2]
@@ -215,16 +213,16 @@ def getTeamPassingNetwork(df):
                         endnote_height=0.04, title_space=0, endnote_space=0)
     pitch.scatter(scatter_df.x, scatter_df.y, s=scatter_df.marker_size, color='red', edgecolors='grey', linewidth=1, alpha=1, ax=ax["pitch"], zorder = 3)
     for i, row in scatter_df.iterrows():
-        pitch.annotate(row.player_name_nickname_values, xy=(row.x, row.y), c='black', va='center', ha='center', weight = "bold", size=16, ax=ax["pitch"], zorder = 4)
+        pitch.annotate(row.player_name, xy=(row.x, row.y), c='black', va='center', ha='center', weight = "bold", size=16, ax=ax["pitch"], zorder = 4)
 
     for i, row in lines_df.iterrows():
             player1 = row["pair_key"].split("_")[0]
             player2 = row['pair_key'].split("_")[1]
             #take the average location of players to plot a line between them
-            player1_x = scatter_df.loc[scatter_df["player_name_nickname_values"] == player1]['x'].iloc[0]
-            player1_y = scatter_df.loc[scatter_df["player_name_nickname_values"] == player1]['y'].iloc[0]
-            player2_x = scatter_df.loc[scatter_df["player_name_nickname_values"] == player2]['x'].iloc[0]
-            player2_y = scatter_df.loc[scatter_df["player_name_nickname_values"] == player2]['y'].iloc[0]
+            player1_x = scatter_df.loc[scatter_df["player_name"] == player1]['x'].iloc[0]
+            player1_y = scatter_df.loc[scatter_df["player_name"] == player1]['y'].iloc[0]
+            player2_x = scatter_df.loc[scatter_df["player_name"] == player2]['x'].iloc[0]
+            player2_y = scatter_df.loc[scatter_df["player_name"] == player2]['y'].iloc[0]
             num_passes = row["pass_count"]
             #adjust the line width so that the more passes, the wider the line
             line_width = (num_passes / lines_df['pass_count'].max() * 10)
@@ -375,7 +373,7 @@ def plotDangerousPlayerPlots(df):
 
     # Create a bar plot
     fig, ax = plt.subplots()
-    ax.bar(players_dict_nickname[pass_count_sorted['player_name']], pass_count_sorted["pass_count"])
+    ax.bar(pass_count_sorted['player_name'], pass_count_sorted["pass_count"])
     
     # Set plot title and labels
     ax.set_title("Passes by Player")
@@ -597,11 +595,10 @@ def plotShotsBarPlot(df):
     player_shots = df_shots.groupby('player_name').size().reset_index(name='total_shots')
     top_players = player_shots.nlargest(15, 'total_shots')
     top_players_sorted = top_players.sort_values('total_shots', ascending=False)
-    df_nickname = getPlayersNickname(top_players_sorted,players_dict_nickname)
 
     # Create a scatter plot
     fig, ax = plt.subplots()
-    ax.scatter(df_nickname['nickname'], top_players_sorted['total_shots'])
+    ax.scatter(top_players_sorted['player_name'], top_players_sorted['total_shots'])
 
     # Set the plot title and labels
     ax.set_title('Top 15 Players with Highest shots')
