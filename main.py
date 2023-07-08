@@ -312,7 +312,6 @@ def plotDangerousPlayerPlots(df):
     # Show the plot in Streamlit app
     st.pyplot(fig)
 
-
 def plotPasseswithShotEnd(df,unique_possessions,passes):
     for i in unique_possessions:
         # plot possession chain that ended with shot
@@ -521,7 +520,7 @@ def plotShotsBarPlot(df):
     df_shots = df[df['type_name'] == 'Shot']
     player_shots = df_shots.groupby('player_name').size().reset_index(name='total_shots')
     top_players = player_shots.nlargest(15, 'total_shots')
-    top_players_sorted = top_players.sort_values('total_passes', ascending=False)
+    top_players_sorted = top_players.sort_values('total_shots', ascending=False)
 
     # Create a scatter plot
     fig, ax = plt.subplots()
