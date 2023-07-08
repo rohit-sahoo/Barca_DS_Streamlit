@@ -117,11 +117,10 @@ def getPassesPerPlayerCount(df):
     player_passes = df.groupby('player_name').size().reset_index(name='total_passes')
     top_players = player_passes.nlargest(15, 'total_passes')
     top_players_sorted = top_players.sort_values('total_passes', ascending=False)
-    df_withNickname = getPlayersNickname(top_players_sorted)
 
     # Create a scatter plot
     fig, ax = plt.subplots()
-    ax.scatter(df_withNickname['nickname'], top_players_sorted['total_passes'])
+    ax.scatter(players_dict_nickname[top_players_sorted['player_name']], top_players_sorted['total_passes'])
 
     # Set the plot title and labels
     ax.set_title('Top 15 Players with Highest Passes')
@@ -166,7 +165,7 @@ def getTeamPassingNetwork(df):
                         endnote_height=0.04, title_space=0, endnote_space=0)
     pitch.scatter(scatter_df.x, scatter_df.y, s=scatter_df.marker_size, color='red', edgecolors='grey', linewidth=1, alpha=1, ax=ax["pitch"], zorder = 3)
     for i, row in scatter_df.iterrows():
-        pitch.annotate(get_key_from_value(players_dict,row.player_name), xy=(row.x, row.y), c='black', va='center', ha='center', weight = "bold", size=16, ax=ax["pitch"], zorder = 4)
+        pitch.annotate(players_dict_nickname[row.player_name], xy=(row.x, row.y), c='black', va='center', ha='center', weight = "bold", size=16, ax=ax["pitch"], zorder = 4)
 
     for i, row in lines_df.iterrows():
             player1 = row["pair_key"].split("_")[0]
@@ -234,8 +233,22 @@ def getPlayersForMatch(matchId_list):
 
     return df_barca_players
 
+def getPlayersForMatchNickname(matchId_list):
+    df_barca_players = dict()
+
+    for matchId in matchId_list:
+        df_lineup = parser.lineup(matchId)
+        df_lineup = df_lineup[df_lineup['team_name'] == "Barcelona"]
+        p_name = df_lineup['player_name']
+        p_nickname = df_lineup['player_nickname']
+        player_dict = dict(zip(p_name, p_nickname))
+        df_barca_players.update(player_dict)
+        #print(df_barca_players)
+
+    return df_barca_players
 
 players_dict = getPlayersForMatch(selected_opponent_matchID)
+players_dict_nickname = getPlayersForMatchNickname(selected_opponent_matchID)
 selected_player= st.selectbox("Select the player to analyze", list(players_dict.keys()))
 
 def getPlayersPassesPlot(df):
@@ -309,11 +322,10 @@ def plotDangerousPlayerPlots(df):
     # Count passes by player and normalize them
     pass_count = df.groupby("player_name").size().reset_index(name="pass_count")
     pass_count_sorted = pass_count.sort_values('pass_count', ascending=False)
-    df_withNickname = getPlayersNickname(pass_count_sorted)
 
     # Create a bar plot
     fig, ax = plt.subplots()
-    ax.bar(df_withNickname["nickname"], pass_count_sorted["pass_count"])
+    ax.bar(players_dict_nickname[pass_count_sorted['player_name']], pass_count_sorted["pass_count"])
     
     # Set plot title and labels
     ax.set_title("Passes by Player")
@@ -535,10 +547,10 @@ def plotShotsBarPlot(df):
     player_shots = df_shots.groupby('player_name').size().reset_index(name='total_shots')
     top_players = player_shots.nlargest(15, 'total_shots')
     top_players_sorted = top_players.sort_values('total_shots', ascending=False)
-    df_withNickname = getPlayersNickname()
+
     # Create a scatter plot
     fig, ax = plt.subplots()
-    ax.scatter(df_withNickname['nickname'], top_players_sorted['total_shots'])
+    ax.scatter(players_dict_nickname[top_players_sorted['player_name']], top_players_sorted['total_shots'])
 
     # Set the plot title and labels
     ax.set_title('Top 15 Players with Highest shots')
