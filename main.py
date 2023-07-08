@@ -538,7 +538,7 @@ def plotShotsBarPlot(df):
     df_withNickname = getPlayersNickname()
     # Create a scatter plot
     fig, ax = plt.subplots()
-    ax.scatter(df_withNickname['nickname']), top_players_sorted['total_shots'])
+    ax.scatter(df_withNickname['nickname'], top_players_sorted['total_shots'])
 
     # Set the plot title and labels
     ax.set_title('Top 15 Players with Highest shots')
