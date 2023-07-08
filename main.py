@@ -109,9 +109,12 @@ completed_normal_passes_away = away_events.loc[away_events['type_name'] == 'Pass
 def getPassesPerPlayerCount(df):
     player_passes = df.groupby('player_name').size().reset_index(name='total_passes')
     top_players = player_passes.nlargest(15, 'total_passes')
+
+    top_players_sorted = top_players.sort_values('total_passes', ascending=False)
+
     # Create a scatter plot
     fig, ax = plt.subplots()
-    ax.scatter(top_players['player_name'], top_players['total_passes'])
+    ax.scatter(top_players_sorted['player_name'], top_players_sorted['total_passes'])
 
     # Set the plot title and labels
     ax.set_title('Top 15 Players with Highest Passes')
@@ -196,7 +199,6 @@ def getPassingNetwork(df):
     ## for selected opponent
     #opponent_passes = df[df['team_name'] == selected_opponent]
     #getTeamPassingNetwork(opponent_passes)
-
 
 def get_key_from_value(dictionary, value):
     for key, val in dictionary.items():
@@ -293,10 +295,11 @@ def plotDangerousPlayerPlots(df):
 
     # Count passes by player and normalize them
     pass_count = df.groupby("player_name").size().reset_index(name="pass_count")
+    pass_count_sorted = pass_count.sort_values('pass_count', ascending=False)
 
     # Create a bar plot
     fig, ax = plt.subplots()
-    ax.bar(pass_count["player_name"], pass_count["pass_count"])
+    ax.bar(pass_count_sorted["player_name"], pass_count_sorted["pass_count"])
     
     # Set plot title and labels
     ax.set_title("Passes by Player")
@@ -438,7 +441,6 @@ def passingProbabilityPlots(df):
         # Check if all elements are greater than 2
         all_greater_than_two = all(count > 2 for count in class_counts)
         if all_greater_than_two:
-            st.write(f"elements in Y are: {y}")
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = 123, stratify = y)
             model = xgboost.XGBClassifier(n_estimators = 100, ccp_alpha=0, max_depth=4, min_samples_leaf=10,
                                 random_state=123)
@@ -519,9 +521,11 @@ def plotShotsBarPlot(df):
     df_shots = df[df['type_name'] == 'Shot']
     player_shots = df_shots.groupby('player_name').size().reset_index(name='total_shots')
     top_players = player_shots.nlargest(15, 'total_shots')
+    top_players_sorted = top_players.sort_values('total_passes', ascending=False)
+
     # Create a scatter plot
     fig, ax = plt.subplots()
-    ax.scatter(top_players['player_name'], top_players['total_shots'])
+    ax.scatter(top_players_sorted['player_name'], top_players_sorted['total_shots'])
 
     # Set the plot title and labels
     ax.set_title('Top 15 Players with Highest shots')
@@ -635,7 +639,7 @@ if selected_analysis:
         st.write("Most dangerous passes bar plot at away")
         plotDangerousPlayerPlots(df_dangerPasses_away)
 
-        st.write("Passes that lead to a shot with its probabilities")
+        st.write("Passes that lead to a shot with its probabilities: ")
         for uniqueMatchID in selected_opponent_match_events['match_id'].unique():
             df_final = selected_opponent_match_events[selected_opponent_match_events['match_id'] == uniqueMatchID]
             passingProbabilityPlots(df_final)
@@ -657,7 +661,7 @@ if selected_analysis:
         st.write(f"Shots Barplot for the season {selected_season} against ", selected_opponent)
         plotShotsBarPlot(selected_opponent_match_events)
 
-        st.write("Passes that lead to a shot with its probabilities")
+        st.write("Passes that lead to a shot with its probabilities: ")
         for uniqueMatchID in selected_opponent_match_events['match_id'].unique():
             df_final = selected_opponent_match_events[selected_opponent_match_events['match_id'] == uniqueMatchID]
             passingProbabilityPlots(df_final)
