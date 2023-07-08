@@ -433,48 +433,48 @@ def passingProbabilityPlots(df):
         passes = df3.loc[df3["type_name"].isin(["Pass"])]
 
         X = passes[var].values 
-        if len(passes['shot_end'].unique()) >= 2:
-            y = passes["shot_end"].values
+        y = passes["shot_end"].values
+        unique_classes, class_counts = np.unique(y, return_counts=True)
+        # Check if all elements are greater than 2
+        all_greater_than_two = all(count > 2 for count in class_counts)
+        if all_greater_than_two:
             st.write(f"elements in Y are: {y}")
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = 123, stratify = y)
             model = xgboost.XGBClassifier(n_estimators = 100, ccp_alpha=0, max_depth=4, min_samples_leaf=10,
                                 random_state=123)
-
-
             scores = cross_val_score(estimator = model, X = X_train, y = y_train, cv = 10, n_jobs = -1)
             #print(np.mean(scores), np.std(scores))
             model.fit(X_train, y_train)
             #print(model.score(X_train, y_train))
             y_pred = model.predict(X_test)
             #print(model.score(X_test, y_test))
+            #predict if ended with shot
+            passes = df3.loc[df3["type_name"].isin(["Pass"])]
+            X = passes[var].values
+            y = passes["shot_end"].values
 
+            #predict probability of shot ended
+            y_pred_proba = model.predict_proba(X)[::,1]
 
+            passes["shot_prob"] = y_pred_proba
+            #OLS
+            try:
+                shot_ended = passes.loc[passes["shot_end"] == 1]
+                X2 = shot_ended[var].values
+                y2 = shot_ended["xG"].values
+                lr = LinearRegression()
+                lr.fit(X2, y2)
+                y_pred = lr.predict(X)
+                passes["xG_pred"] = y_pred
+                #calculate xGchain
+                passes["xT"] = passes["xG_pred"]*passes["shot_prob"]
 
-        #predict if ended with shot
-        passes = df3.loc[df3["type_name"].isin(["Pass"])]
-        X = passes[var].values
-        y = passes["shot_end"].values
-
-        #predict probability of shot ended
-        y_pred_proba = model.predict_proba(X)[::,1]
-
-        passes["shot_prob"] = y_pred_proba
-        #OLS
-        try:
-            shot_ended = passes.loc[passes["shot_end"] == 1]
-            X2 = shot_ended[var].values
-            y2 = shot_ended["xG"].values
-            lr = LinearRegression()
-            lr.fit(X2, y2)
-            y_pred = lr.predict(X)
-            passes["xG_pred"] = y_pred
-            #calculate xGchain
-            passes["xT"] = passes["xG_pred"]*passes["shot_prob"]
-
-            passes[["xG_pred", "shot_prob", "xT"]].head(5)
-            plotPasseswithShotEnd(df3,unique_possessions,passes)
-        except:
-            print("Error with model building")
+                passes[["xG_pred", "shot_prob", "xT"]].head(5)
+                plotPasseswithShotEnd(df3,unique_possessions,passes)
+            except:
+                print("Error with model building")
+        else:
+            st.write("Player had only one type of shots, can build a probability model if the dataset has only one type of class")
     else:
         st.write("Player had zero shots")
     
