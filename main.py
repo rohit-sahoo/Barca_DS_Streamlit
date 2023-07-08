@@ -434,17 +434,19 @@ def passingProbabilityPlots(df):
 
         X = passes[var].values 
         y = passes["shot_end"].values
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = 123, stratify = y)
-        model = xgboost.XGBClassifier(n_estimators = 100, ccp_alpha=0, max_depth=4, min_samples_leaf=10,
-                            random_state=123)
+        if len(X) > 2 and len(y)>=2 :
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = 123, stratify = y)
+            model = xgboost.XGBClassifier(n_estimators = 100, ccp_alpha=0, max_depth=4, min_samples_leaf=10,
+                                random_state=123)
 
 
-        scores = cross_val_score(estimator = model, X = X_train, y = y_train, cv = 10, n_jobs = -1)
-        #print(np.mean(scores), np.std(scores))
-        model.fit(X_train, y_train)
-        #print(model.score(X_train, y_train))
-        y_pred = model.predict(X_test)
-        #print(model.score(X_test, y_test))
+            scores = cross_val_score(estimator = model, X = X_train, y = y_train, cv = 10, n_jobs = -1)
+            #print(np.mean(scores), np.std(scores))
+            model.fit(X_train, y_train)
+            #print(model.score(X_train, y_train))
+            y_pred = model.predict(X_test)
+            #print(model.score(X_test, y_test))
+
 
 
         #predict if ended with shot
