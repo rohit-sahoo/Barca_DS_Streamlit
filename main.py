@@ -12,7 +12,7 @@ from sklearn.model_selection import cross_val_score
 parser = Sbopen()
 team = "Barcelona"
 
-st.subheader("Here, we have La Liga data of all the Matches played by Barcelona in the Lionel Messi era")
+st.subheader("Here we have La Liga data of all the Matches played by Barcelona in the Lionel Messi era")
 df_competition = parser.competition()
 
 def getSeasonDict():
