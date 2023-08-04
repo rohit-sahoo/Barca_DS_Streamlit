@@ -8,12 +8,26 @@ import xgboost
 from itertools import combinations_with_replacement
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import cross_val_score
+from pandasai.llm.openai import OpenAI
+from pandasai import PandasAI
+
 
 parser = Sbopen()
 team = "Barcelona"
 
 st.subheader("Here we have La Liga data of all the Matches played by Barcelona in the Lionel Messi era")
+openai_api_key = "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"
+st.set_page_config(layout='wide')
+st.subheader("Here, we have La Liga data of all the Matches played by Barcelona in the Lionel Messi era")
 df_competition = parser.competition()
+
+#openAi chaatbot
+def chat_with_csv(df,prompt):
+    llm = OpenAI(api_token=openai_api_key)
+    pandas_ai = PandasAI(llm)
+    result = pandas_ai.run(df, prompt=prompt)
+    print(result)
+    return result
 
 def getSeasonDict():
     df_laliga_rows = df_competition[df_competition['competition_id'] == 11]
@@ -70,9 +84,7 @@ home_matchID = int(home_match['match_id'].item())
 
 away_match = selected_opponent_matches[selected_opponent_matches['away_team_name'] == "Barcelona"]
 away_matchID = int(away_match['match_id'].item())
-
-
-
+    
 ### 2. Fetching match events with selected opponents
 # Function to fetch matches based on 'competition_id' and 'season_id' values
 def fetch_events(row):
@@ -678,66 +690,82 @@ if selected_opponent:
     st.write(f"Analyzing opponent: {selected_opponent}")
 
 if selected_analysis:
-    st.write(f"Analyzing : {selected_analysis}")
-    if selected_analysis == "Passes":
+    col1, col2 = st.columns([1,1])
 
-        if selected_player:
-            st.write(f"Analyzing passes for {selected_player} against {selected_opponent}")
-            st.write("1. Home Game")
-            getPlayersPassesPlot(home_events)
-            st.write("2. Away Game")
-            getPlayersPassesPlot(away_events)
+    #visualization code
+    with col1:
 
-        st.write(f"Analyzing total passes for both home and away games:")
-        getPassesPerPlayerCount(completed_normal_passes)
+        st.write(f"Analyzing : {selected_analysis}")
+        if selected_analysis == "Passes":
 
-        st.write(f"Analyzing total passes for home game:")
-        getPassesPerPlayerCount(home_events)
-        
-        st.write(f"Analyzing total passes for away game:")
-        getPassesPerPlayerCount(away_events)
-        
-        st.write(f"Passing network of Barcelona against: {selected_opponent}")
-        getPassingNetwork(selected_opponent_match_events)
+            if selected_player:
+                st.write(f"Analyzing passes for {selected_player} against {selected_opponent}")
+                st.write("1. Home Game")
+                getPlayersPassesPlot(home_events)
+                st.write("2. Away Game")
+                getPlayersPassesPlot(away_events)
 
-        st.write("Passing heatmap - Most dangerous passes heatmap at home")
-        df_dangerPasses_home = getPassingHeatMap(home_events)
+            st.write(f"Analyzing total passes for both home and away games:")
+            getPassesPerPlayerCount(completed_normal_passes)
 
-        st.write("Passing heatmap - Most dangerous passes heatmap at away")
-        df_dangerPasses_away = getPassingHeatMap(away_events)
+            st.write(f"Analyzing total passes for home game:")
+            getPassesPerPlayerCount(home_events)
+            
+            st.write(f"Analyzing total passes for away game:")
+            getPassesPerPlayerCount(away_events)
+            
+            st.write(f"Passing network of Barcelona against: {selected_opponent}")
+            getPassingNetwork(selected_opponent_match_events)
 
-        st.write("Most dangerous passes bar plot at home")
-        plotDangerousPlayerPlots(df_dangerPasses_home)
+            st.write("Passing heatmap - Most dangerous passes heatmap at home")
+            df_dangerPasses_home = getPassingHeatMap(home_events)
 
-        st.write("Most dangerous passes bar plot at away")
-        plotDangerousPlayerPlots(df_dangerPasses_away)
+            st.write("Passing heatmap - Most dangerous passes heatmap at away")
+            df_dangerPasses_away = getPassingHeatMap(away_events)
 
-        st.write("Passes that lead to a shot with its probabilities: ")
-        for uniqueMatchID in selected_opponent_match_events['match_id'].unique():
-            df_final = selected_opponent_match_events[selected_opponent_match_events['match_id'] == uniqueMatchID]
-            passingProbabilityPlots(df_final)
+            st.write("Most dangerous passes bar plot at home")
+            plotDangerousPlayerPlots(df_dangerPasses_home)
 
-    if selected_analysis == "Shots":
+            st.write("Most dangerous passes bar plot at away")
+            plotDangerousPlayerPlots(df_dangerPasses_away)
 
-        st.write("Shots heat map for home and away game")
-        plotShotHeatMap(selected_opponent_match_events)
+            st.write("Passes that lead to a shot with its probabilities: ")
+            for uniqueMatchID in selected_opponent_match_events['match_id'].unique():
+                df_final = selected_opponent_match_events[selected_opponent_match_events['match_id'] == uniqueMatchID]
+                passingProbabilityPlots(df_final)
 
-        st.write("Plotting shots for ", selected_player)
-        plotShotsForSelectedPlayer(selected_opponent_match_events)
-        
-        st.write("Plotting shots for the match at home")
-        plotShots(home_events)
+        if selected_analysis == "Shots":
 
-        st.write("Plotting shots for the match at away")
-        plotShots(away_events)
+            st.write("Shots heat map for home and away game")
+            plotShotHeatMap(selected_opponent_match_events)
 
-        st.write(f"Shots Barplot for the season {selected_season} against ", selected_opponent)
-        plotShotsBarPlot(selected_opponent_match_events)
+            st.write("Plotting shots for ", selected_player)
+            plotShotsForSelectedPlayer(selected_opponent_match_events)
+            
+            st.write("Plotting shots for the match at home")
+            plotShots(home_events)
 
-        st.write("Passes that lead to a shot with its probabilities: ")
-        for uniqueMatchID in selected_opponent_match_events['match_id'].unique():
-            df_final = selected_opponent_match_events[selected_opponent_match_events['match_id'] == uniqueMatchID]
-            passingProbabilityPlots(df_final)
+            st.write("Plotting shots for the match at away")
+            plotShots(away_events)
+
+            st.write(f"Shots Barplot for the season {selected_season} against ", selected_opponent)
+            plotShotsBarPlot(selected_opponent_match_events)
+
+            st.write("Passes that lead to a shot with its probabilities: ")
+            for uniqueMatchID in selected_opponent_match_events['match_id'].unique():
+                df_final = selected_opponent_match_events[selected_opponent_match_events['match_id'] == uniqueMatchID]
+                passingProbabilityPlots(df_final)
+
+    with col2:
+        st.info("Chat Below")
+            
+        input_text = st.text_area("Enter your query")
+
+        if input_text is not None:
+            if st.button("Chat with CSV"):
+                st.info("Your Query: "+input_text)
+                result = chat_with_csv(selected_opponent_match_events, input_text)
+                st.success(result)
 
 
 
