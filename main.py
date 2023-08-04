@@ -10,6 +10,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import cross_val_score
 from pandasai.llm.openai import OpenAI
 from pandasai import PandasAI
+st.set_page_config(layout='wide')
 
 
 parser = Sbopen()
@@ -17,7 +18,6 @@ team = "Barcelona"
 
 st.subheader("Here we have La Liga data of all the Matches played by Barcelona in the Lionel Messi era")
 openai_api_key = "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"
-st.set_page_config(layout='wide')
 st.subheader("Here, we have La Liga data of all the Matches played by Barcelona in the Lionel Messi era")
 df_competition = parser.competition()
 
