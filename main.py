@@ -810,16 +810,11 @@ if selected_analysis:
 
 
 
+# Footer
+st.footer("© 2023 Football Data Hub")
  
 # Add your web app content here
 st.markdown("</div>", unsafe_allow_html=True)
-
-
-
-# Footer
-st.footer("© 2023 Football Data Hub")
-
-        
 
 
 
