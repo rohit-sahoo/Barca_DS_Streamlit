@@ -10,8 +10,48 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import cross_val_score
 from pandasai.llm.openai import OpenAI
 from pandasai import PandasAI
-st.set_page_config(layout='wide')
 
+
+
+# Set page configuration
+st.set_page_config(
+    page_title="Football Data Hub",
+    page_icon="⚽",
+    layout="wide"
+)
+
+# Apply football-themed styling
+st.markdown(
+    """
+    <style>
+    body {
+        background-color: #f0f0f0;
+        font-family: Arial, sans-serif;
+    }
+
+    .stApp {
+        background-color: #f0f0f0;
+    }
+
+    .st-bw {
+        font-family: Arial, sans-serif;
+    }
+
+    .st-c3 {
+        background-color: #004080; /* Football blue */
+        color: #ffffff;
+    }
+
+    /* Add more CSS styles here */
+    
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
+# Web app section
+st.markdown("<div class='web-app'>", unsafe_allow_html=True)
 
 parser = Sbopen()
 team = "Barcelona"
@@ -770,7 +810,14 @@ if selected_analysis:
 
 
 
+ 
+# Add your web app content here
+st.markdown("</div>", unsafe_allow_html=True)
 
+
+
+# Footer
+st.footer("© 2023 Football Data Hub")
 
         
 
