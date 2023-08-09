@@ -10,13 +10,68 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import cross_val_score
 from pandasai.llm.openai import OpenAI
 from pandasai import PandasAI
-st.set_page_config(layout='wide')
+
+
+# Set the page configuration
+st.set_page_config(
+    page_title="Football Data Hub",
+    page_icon="⚽",
+    layout="wide"
+)
+
+# Apply football-themed styling
+st.markdown(
+    """
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+    }
+    
+    header {
+        background-color: #004080; /* Football blue */
+        color: #ffffff;
+        padding: 20px;
+        text-align: center;
+    }
+    
+    /* Add more CSS styles here */
+    
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Header
+st.header("Football Data Hub")
+
+# Navigation
+st.sidebar.header("Navigation")
+# Add sidebar navigation options here
+
+# Web app section
+st.markdown("<div class='web-app'>", unsafe_allow_html=True)
+# Add your web app content here
+st.markdown("</div>", unsafe_allow_html=True)
+
+# Visualizations section
+st.subheader("Interactive Visualizations")
+# Add interactive visualizations here
+
+# Chatbot section
+st.subheader("Dynamic Chatbot")
+# Add dynamic chatbot content here
+
+# Footer
+st.footer("© 2023 Football Data Hub")
+
+
 
 
 parser = Sbopen()
 team = "Barcelona"
 
-st.subheader("Here we have La Liga data of all the Matches played by Barcelona in the Lionel Messi era")
+st.subheader("Revealing Barcelona's Lionel Messi Era Through La Liga Match Data")
 openai_api_key = "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"
 
 df_competition = parser.competition()
