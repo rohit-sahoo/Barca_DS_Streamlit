@@ -18,7 +18,7 @@ team = "Barcelona"
 
 st.subheader("Here we have La Liga data of all the Matches played by Barcelona in the Lionel Messi era")
 openai_api_key = "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"
-st.subheader("Here, we have La Liga data of all the Matches played by Barcelona in the Lionel Messi era")
+
 df_competition = parser.competition()
 
 #openAi chaatbot
