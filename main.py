@@ -56,7 +56,7 @@ st.markdown("<div class='web-app'>", unsafe_allow_html=True)
 parser = Sbopen()
 team = "Barcelona"
 
-st.subheader("Here we have La Liga data of all the Matches played by Barcelona in the Lionel Messi era")
+st.subheader("Comprehensive Analysis of Barcelona's Matches in the La Liga During the Lionel Messi Era")
 openai_api_key = ""
 
 df_competition = parser.competition()
